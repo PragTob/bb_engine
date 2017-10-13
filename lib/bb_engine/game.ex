@@ -139,17 +139,17 @@ defmodule BBEngine.Simulation do
   end
 
   @final_quarter 4
-  defp simulate_event(game_state = %GameState{quarter: @final_quarter, clock_seconds: clocks_seconds})
+  def simulate_event(game_state = %GameState{quarter: @final_quarter, clock_seconds: clocks_seconds})
          when clocks_seconds <= 0 do
     game_state
   end
-  defp simulate_event(game_state = %GameState{quarter: quarter, clock_seconds: clocks_seconds})
+  def simulate_event(game_state = %GameState{quarter: quarter, clock_seconds: clocks_seconds})
          when clocks_seconds <= 0 do
     # Do substitutions etc.
     simulate_event(%GameState{ game_state | quarter: quarter + 1,
                                             clock_seconds: @seconds_per_quarter})
   end
-  defp simulate_event(game_state = %GameState{clock_seconds: time}) do
+  def simulate_event(game_state = %GameState{clock_seconds: time}) do
     new_game_state = game_state
                      |> determine_action
                      |> play_action(game_state)

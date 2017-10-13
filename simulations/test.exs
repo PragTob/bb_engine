@@ -12,7 +12,7 @@ home_squad = %Squad{
 }
 road_squad = %Squad{
   players: road_players,
-  lineup: [13, 15, 15, 16, 17]
+  lineup: [13, 14, 15, 16, 17]
 }
 
 game_state = Simulation.simulate(home_squad, road_squad)
