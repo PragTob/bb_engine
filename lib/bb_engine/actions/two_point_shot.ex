@@ -16,7 +16,7 @@ defmodule BBEngine.Actions.TwoPointShot do
   def play(game_state) do
     game_state
     |> simulate_action()
-    |> update_game_state(game_state)
+    |> update_game_state
   end
 
   defp simulate_action(game_state = %GameState{ball_handler_id: ball_handler_id}) do
@@ -24,11 +24,12 @@ defmodule BBEngine.Actions.TwoPointShot do
     opponent = Map.fetch! game_state.players, opponent_id
     ball_handler = Map.fetch! game_state.players, ball_handler_id
     shot = %Shot{shooter: ball_handler, defender: opponent}
-    success = successful?(ball_handler.offensive_rating, opponent.defensive_rating)
-    %Shot{shot | success: success}
+    {success, new_game_state} =
+      successful?(game_state, ball_handler.offensive_rating, opponent.defensive_rating)
+    {%Shot{shot | success: success}, new_game_state}
   end
 
-  defp update_game_state(shot_result, game_state = %GameState{events: events}) do
+  defp update_game_state({shot_result, game_state = %GameState{events: events}}) do
     %GameState{game_state | events: [shot_result | events]}
     |> update_box_score(shot_result)
     |> switch_possesion
