@@ -1,5 +1,5 @@
 defmodule BBEngine.GameState do
-  alias BBEngine.{BoxScore, Squad, Player}
+  alias BBEngine.{BoxScore, Squad, Player, Random}
 
   defstruct [
     :quarter,
@@ -20,9 +20,9 @@ defmodule BBEngine.GameState do
 
   def new(home_squad, road_squad, initial_seed) do
     {home_squad, road_squad} = set_court(home_squad, road_squad)
-    seed = :rand.seed_s(initial_seed)
+    seed = Random.seed(initial_seed)
 
-    game_state = %__MODULE__{
+    %__MODULE__{
       quarter: 1,
       clock_seconds: @seconds_per_quarter,
       box_score: BoxScore.new(home_squad, road_squad),

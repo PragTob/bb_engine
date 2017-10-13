@@ -8,7 +8,7 @@ defmodule BBEngine.Events.Shot do
 end
 
 defmodule BBEngine.Actions.TwoPointShot do
-  import BBEngine.Random
+  alias BBEngine.Random
   alias BBEngine.Events.Shot
   alias BBEngine.GameState
   alias BBEngine.BoxScore
@@ -24,12 +24,12 @@ defmodule BBEngine.Actions.TwoPointShot do
     opponent = Map.fetch! game_state.players, opponent_id
     ball_handler = Map.fetch! game_state.players, ball_handler_id
     shot = %Shot{shooter: ball_handler, defender: opponent}
-    {success, new_game_state} =
-      successful?(game_state, ball_handler.offensive_rating, opponent.defensive_rating)
-    {%Shot{shot | success: success}, new_game_state}
+    {new_game_state, success} =
+      Random.successful?(game_state, ball_handler.offensive_rating, opponent.defensive_rating)
+    {new_game_state, %Shot{shot | success: success}}
   end
 
-  defp update_game_state({shot_result, game_state = %GameState{events: events}}) do
+  defp update_game_state({game_state = %GameState{events: events}, shot_result}) do
     %GameState{game_state | events: [shot_result | events]}
     |> update_box_score(shot_result)
     |> switch_possesion
@@ -79,8 +79,10 @@ defmodule BBEngine.Actions.TwoPointShot do
                                                 players: players}) do
     team = Map.fetch!(players, ball_handler_id).court
     opponent = opposite(team)
-    new_ball_handler = Enum.random(Map.fetch!(game_state, opponent).lineup)
-    %GameState{game_state | ball_handler_id: new_ball_handler}
+    opponent_lineup = Map.fetch!(game_state, opponent).lineup
+    {new_game_state, new_ball_handler} =
+      Random.list_element(game_state, opponent_lineup)
+    %GameState{new_game_state | ball_handler_id: new_ball_handler}
   end
 
   defp opposite(:home), do: :road

@@ -1,6 +1,6 @@
 defmodule BBEngine.SimulationTest do
   use ExUnit.Case
-  alias BBEngine.{GameState, Player, Squad}
+  alias BBEngine.{GameState, Player, Squad,  Random}
   import BBEngine.Simulation
 
   @home_squad %Squad{
@@ -26,6 +26,14 @@ defmodule BBEngine.SimulationTest do
 
       assert game_state.clock_seconds <= 0 # should get fixed :D
       assert game_state.quarter >= 4
+    end
+
+    test "simulations are deterministic" do
+      seed = Random.seed()
+      game_state =  simulate(@home_squad, @road_squad, seed)
+      game_state2 = simulate(@home_squad, @road_squad, seed)
+
+      assert game_state == game_state2
     end
   end
 

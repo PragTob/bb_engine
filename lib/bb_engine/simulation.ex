@@ -1,10 +1,7 @@
 defmodule BBEngine.Simulation do
-  alias BBEngine.GameState
-  alias BBEngine.Squad
-  alias BBEngine.Player
-  alias BBEngine.Actions
+  alias BBEngine.{GameState, Actions, Random}
 
-  def simulate(home_squad, road_squad, seed \\ :rand.seed_s(:exrop)) do
+  def simulate(home_squad, road_squad, seed \\ Random.seed()) do
     # home court advantage?
     home_squad
     |> GameState.new(road_squad, seed)
@@ -14,8 +11,9 @@ defmodule BBEngine.Simulation do
 
   defp jump_ball(game_state) do
     # of course get a correct jumpball going here
-    new_ball_handler = Enum.random game_state.home.lineup
-    %GameState{game_state | ball_handler_id: new_ball_handler}
+    {new_game_state, winner} =
+      Random.list_element(game_state, game_state.home.lineup)
+    %GameState{new_game_state | ball_handler_id: winner}
   end
 
   @final_quarter 4
@@ -41,8 +39,8 @@ defmodule BBEngine.Simulation do
                      |> determine_action
                      |> play_action(game_state)
 
-    # TBD
-    elapsed_time = 10 + :rand.uniform(14)
+    {new_game_state, random} = Random.uniform(new_game_state, 14)
+    elapsed_time = 10 + random
     %GameState{new_game_state | clock_seconds: time - elapsed_time}
   end
 
