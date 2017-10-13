@@ -141,7 +141,6 @@ defmodule BBEngine.Simulation do
   @final_quarter 4
   defp simulate_event(game_state = %GameState{quarter: @final_quarter, clock_seconds: clocks_seconds})
          when clocks_seconds <= 0 do
-    IO.puts "Game end"
     game_state
   end
   defp simulate_event(game_state = %GameState{quarter: quarter, clock_seconds: clocks_seconds})
