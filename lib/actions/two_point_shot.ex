@@ -25,7 +25,7 @@ defmodule BBEngine.Actions.TwoPointShot do
     ball_handler = Map.fetch! game_state.players, ball_handler_id
     shot = %Shot{shooter: ball_handler, defender: opponent}
     success = successful?(ball_handler.offensive_rating, opponent.defensive_rating)
-    new_shot = %Shot{shot | success: success}
+    %Shot{shot | success: success}
   end
 
   defp update_game_state(shot_result, game_state = %GameState{events: events}) do

@@ -13,7 +13,9 @@ defmodule BBEngine.GameState do
     :road,
     :events,
     :players,
-    :matchups
+    :matchups,
+    :initial_seed,
+    :current_seed
   ]
 end
 
@@ -36,7 +38,7 @@ defmodule BBEngine.BoxScore do
 
   def new(home_squad, away_squad) do
     %__MODULE__{
-      team: team_box_scores,
+      team: team_box_scores(),
       individual: player_box_scores(home_squad, away_squad)
     }
   end
@@ -83,7 +85,7 @@ defmodule BBEngine.Simulation do
 
   @minutes_per_quarter 10
   @seconds_per_quarter 60 * @minutes_per_quarter
-  def simulate(home_squad, road_squad) do
+  def simulate(home_squad, road_squad, seed \\ :rand.seed_s(:exrop)) do
     {home_squad, road_squad} = set_court(home_squad, road_squad)
     game_state = %GameState{
       quarter: 1,
@@ -92,7 +94,9 @@ defmodule BBEngine.Simulation do
       home: home_squad,
       road: road_squad,
       players: players_map(home_squad, road_squad),
-      matchups: assign_matchups(home_squad, road_squad)
+      matchups: assign_matchups(home_squad, road_squad),
+      initial_seed: seed, # export with :rand.export_seed
+      current_seed: seed
     }
 
     game_state = jump_ball(game_state)
@@ -156,7 +160,7 @@ defmodule BBEngine.Simulation do
     simulate_event %GameState{new_game_state | clock_seconds: time - elapsed_time}
   end
 
-  defp determine_action(game_state) do
+  defp determine_action(_game_state) do
     Actions.TwoPointShot
   end
 
