@@ -8,11 +8,11 @@ defmodule BBEngine.GameState do
     :box_score,
     :home,
     :road,
-    :events,
     :players,
     :matchups,
     :initial_seed,
-    :current_seed
+    :current_seed,
+    events: []
   ]
 
   @minutes_per_quarter 10

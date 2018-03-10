@@ -1,5 +1,5 @@
 defmodule BBEngine.Simulation do
-  alias BBEngine.{GameState, Actions, Random}
+  alias BBEngine.{GameState, Actions, Random, Events}
 
   def simulate(home_squad, road_squad, seed \\ Random.seed()) do
     # home court advantage?
@@ -35,16 +35,29 @@ defmodule BBEngine.Simulation do
                              clock_seconds: @seconds_per_quarter}
   end
   def simulate_event(game_state = %GameState{clock_seconds: time}) do
-    new_game_state = game_state
-                     |> determine_action
-                     |> play_action(game_state)
+    {new_game_state, event} =
+      game_state
+      |> determine_action
+      |> play_action(game_state)
 
-    {new_game_state, random} = Random.uniform(new_game_state, 14)
-    elapsed_time = 10 + random
-    %GameState{new_game_state | clock_seconds: time - elapsed_time}
+    
+    %GameState{new_game_state |
+      clock_seconds: time - event.duration,
+      events: [event | new_game_state.events]
+    }
   end
 
-  defp determine_action(_game_state) do
+  defp determine_action(%GameState{events: []}) do
+    Actions.TwoPointShot
+  end
+  defp determine_action(%GameState{events: [last_event | _]}) do
+    reaction_action(last_event)
+  end
+
+  defp reaction_action(%Events.Shot{}) do
+    Actions.SwitchPossession
+  end
+  defp reaction_action(_) do
     Actions.TwoPointShot
   end
 

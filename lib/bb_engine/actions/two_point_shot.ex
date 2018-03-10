@@ -3,7 +3,8 @@ defmodule BBEngine.Events.Shot do
     :shooter,
     :defender,
     :type,
-    :success
+    :success,
+    :duration
   ]
 end
 
@@ -16,23 +17,32 @@ defmodule BBEngine.Actions.TwoPointShot do
   def play(game_state) do
     game_state
     |> simulate_action()
-    |> update_game_state
+    |> update_game_state()
   end
 
   defp simulate_action(game_state = %GameState{ball_handler_id: ball_handler_id}) do
     opponent_id = Map.fetch!(game_state.matchups, ball_handler_id)
     opponent = Map.fetch! game_state.players, opponent_id
     ball_handler = Map.fetch! game_state.players, ball_handler_id
-    shot = %Shot{shooter: ball_handler, defender: opponent}
-    {new_game_state, success} =
-      Random.successful?(game_state, ball_handler.offensive_rating, opponent.defensive_rating)
-    {new_game_state, %Shot{shot | success: success}}
+    {new_game_state, elapsed_time} = elapsed_time(game_state)
+    shot = %Shot{
+      shooter: ball_handler,
+      defender: opponent,
+      duration: elapsed_time
+    }
+    {final_game_state, success} =
+      Random.successful?(new_game_state, ball_handler.offensive_rating, opponent.defensive_rating)
+    {final_game_state, %Shot{shot | success: success}}
   end
 
-  defp update_game_state({game_state = %GameState{events: events}, shot_result}) do
-    %GameState{game_state | events: [shot_result | events]}
-    |> update_box_score(shot_result)
-    |> switch_possesion
+  defp elapsed_time(game_state) do
+    {new_game_state, random} = Random.uniform(game_state, 14)
+    elapsed_time = 10 + random
+    {new_game_state, elapsed_time}
+  end
+
+  defp update_game_state({game_state, shot_result}) do
+    {update_box_score(game_state, shot_result), shot_result}
   end
 
   defp update_box_score(game_state = %GameState{box_score: box_score}, event) do
@@ -74,17 +84,4 @@ defmodule BBEngine.Actions.TwoPointShot do
       field_goals_attempted: statistics.field_goals_attempted + 1
     }
   end
-
-  defp switch_possesion(game_state = %GameState{ball_handler_id: ball_handler_id,
-                                                players: players}) do
-    team = Map.fetch!(players, ball_handler_id).court
-    opponent = opposite(team)
-    opponent_lineup = Map.fetch!(game_state, opponent).lineup
-    {new_game_state, new_ball_handler} =
-      Random.list_element(game_state, opponent_lineup)
-    %GameState{new_game_state | ball_handler_id: new_ball_handler}
-  end
-
-  defp opposite(:home), do: :road
-  defp opposite(:road), do: :home
 end
