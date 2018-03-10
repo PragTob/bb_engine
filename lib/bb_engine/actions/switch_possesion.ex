@@ -23,7 +23,13 @@ defmodule BBEngine.Actions.SwitchPossession do
       duration: 0
     }
 
-    {%GameState{new_game_state | ball_handler_id: new_ball_handler}, event}
+    {
+      %GameState{new_game_state |
+        ball_handler_id: new_ball_handler,
+        possession: opponent
+      },
+      event
+    }
   end
 
   defp opposite(:home), do: :road

@@ -13,7 +13,7 @@ defmodule BBEngine.Simulation do
     # of course get a correct jumpball going here
     {new_game_state, winner} =
       Random.list_element(game_state, game_state.home.lineup)
-    %GameState{new_game_state | ball_handler_id: winner}
+    %GameState{new_game_state | ball_handler_id: winner, possession: :home}
   end
 
   @final_quarter 4
@@ -54,8 +54,11 @@ defmodule BBEngine.Simulation do
     reaction_action(last_event)
   end
 
-  defp reaction_action(%Events.Shot{}) do
+  defp reaction_action(%Events.Shot{success: true}) do
     Actions.SwitchPossession
+  end
+  defp reaction_action(%Events.Shot{success: false}) do
+    Actions.Rebound
   end
   defp reaction_action(_) do
     Actions.TwoPointShot

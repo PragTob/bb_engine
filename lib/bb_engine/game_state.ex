@@ -5,6 +5,7 @@ defmodule BBEngine.GameState do
     :quarter,
     :clock_seconds,
     :ball_handler_id,
+    :possession,
     :box_score,
     :home,
     :road,

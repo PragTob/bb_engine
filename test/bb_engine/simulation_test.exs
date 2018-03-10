@@ -4,15 +4,11 @@ defmodule BBEngine.SimulationTest do
   import BBEngine.Simulation
 
   @home_squad %Squad{
-    players: Enum.map((1..12), fn(id) ->
-      %Player{id: id, offensive_rating: 50, defensive_rating: 50}
-    end),
+    players: Enum.map((1..12), &Player.standard_player/1),
     lineup: [1, 2, 3, 4, 5]
   }
   @road_squad %Squad{
-    players: Enum.map((13..24), fn(id) ->
-      %Player{id: id, offensive_rating: 50, defensive_rating: 50}
-    end),
+    players: Enum.map((13..24), &Player.standard_player/1),
     lineup: [13, 14, 15, 16, 17]
   }
 
