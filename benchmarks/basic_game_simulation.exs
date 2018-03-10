@@ -19,4 +19,5 @@ Benchee.run %{
   "basic simulation" => fn ->
     Simulation.simulate(home_squad, road_squad)
   end
-}
+}, measure_memory: true,
+   console: [extended_statistics: true]
