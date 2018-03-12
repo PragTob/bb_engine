@@ -28,4 +28,15 @@ defmodule BBEngine.Random do
     index = random - 1
     {new_game_state, Enum.at(list, index)}
   end
+
+  def weighted(game_state, probability_points) do
+    {list, max_value} = Enum.reduce(probability_points, {[], 0}, fn {entity, value}, {list, limit} ->
+      to_value = value + limit
+      {[{to_value, entity} | list], to_value}
+    end)
+    list = Enum.reverse list
+    {new_game_state, random} = uniform(game_state, max_value)
+    {_, winner} = Enum.find(list, fn {value, element} -> random <= value end)
+    {new_game_state, winner}
+  end
 end
