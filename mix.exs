@@ -6,8 +6,9 @@ defmodule BbEngine.Mixfile do
       app: :bb_engine,
       version: "0.1.0",
       elixir: "~> 1.5",
-      start_permanent: Mix.env == :prod,
-      deps: deps()
+      start_permanent: Mix.env() == :prod,
+      deps: deps(),
+      dialyzer: [flags: [:unmatched_returns, :error_handling, :race_conditions, :underspecs]]
     ]
   end
 
@@ -22,7 +23,8 @@ defmodule BbEngine.Mixfile do
   defp deps do
     [
       {:benchee, "~> 0.9", only: :dev, github: "PragTob/benchee"},
-      {:mix_test_watch, "~> 0.5", only: :dev, runtime: false}
+      {:mix_test_watch, "~> 0.5", only: :dev, runtime: false},
+      {:dialyxir, "~> 0.5", only: [:dev], runtime: false}
     ]
   end
 end

@@ -27,7 +27,7 @@ defmodule BBEngine.Actions.Rebound do
     defensive_rebound = defense_skills(game_state, Possession.opposite(offense))
 
     rebounding_map =
-      Map.merge(offensive_rebound, defensive_rebound, fn _, _, _ -> raise "boom" end)
+      Map.merge(offensive_rebound, defensive_rebound)
 
     {new_game_state, rebounder} = Random.weighted(game_state, rebounding_map)
 
