@@ -36,7 +36,7 @@ defmodule BBEngine.Random do
     end)
     list = Enum.reverse list
     {new_game_state, random} = uniform(game_state, max_value)
-    {_, winner} = Enum.find(list, fn {value, element} -> random <= value end)
+    {_, winner} = Enum.find(list, fn {value, _element} -> random <= value end)
     {new_game_state, winner}
   end
 end
