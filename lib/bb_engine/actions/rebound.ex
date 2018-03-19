@@ -10,7 +10,6 @@ defmodule BBEngine.Actions.Rebound do
   alias BBEngine.Random
   alias BBEngine.GameState
   alias BBEngine.BoxScore
-  alias BBEngine.Player
   alias BBEngine.Events
 
   def play(game_state) do
@@ -26,38 +25,28 @@ defmodule BBEngine.Actions.Rebound do
     defensive_players = players(game_state, offense)
     offensive_players = players(game_state, defense)
 
-    offensive_rebound = skill_score(offensive_players, :offensive_rebound)
-    defensive_rebound = skill_score(defensive_players, :defensive_rebound)
+    offensive_rebound = skill_map(offensive_players, :offensive_rebound)
+    defensive_rebound = skill_map(defensive_players, :defensive_rebound)
 
-    {new_game_state, success} =
-      Random.successful?(game_state, defensive_rebound, offensive_rebound)
+    rebounding_map = Map.merge offensive_rebound, defensive_rebound, fn _, _, _ -> raise "boom" end
+    
+    {new_game_state, rebounder} = Random.weighted(game_state, rebounding_map)
 
-    {{new_game_state, rebounder}, team} =
-      if success do
-        {Random.list_element(new_game_state, defensive_players), defense}
-      else
-        {Random.list_element(new_game_state, offensive_players), offense}
-      end
-
-    event = 
-      %Events.Rebound{
-        rebounder: rebounder.id,
-        duration: 2,
-        team: team
-      }
+    event =
+      %Events.Rebound{rebounder: rebounder.id, duration: 2, team: rebounder.team}
     
     {new_game_state, event}
   end
 
-  defp skill_score(players, skill) do
-    players
-    |> Enum.map(fn %{^skill => value} -> value end)
-    |> Enum.sum
+  defp skill_map(players, skill) do
+    Enum.reduce(players, %{}, fn(player = %{^skill => value}, map) ->
+      Map.put_new(map, player, value)
+    end)
   end
 
-  defp players(game_state, court) do
+  defp players(game_state, team) do
     game_state
-    |> Map.fetch!(court)
+    |> Map.fetch!(team)
     |> Map.fetch!(:lineup)
     |> Enum.map(fn id -> Map.fetch!(game_state.players, id) end)
   end

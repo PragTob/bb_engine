@@ -12,7 +12,7 @@ defmodule BBEngine.Actions.SwitchPossession do
   alias BBEngine.Random
 
   def play(game_state = %GameState{ball_handler_id: ball_handler_id, players: players}) do
-    team = Map.fetch!(players, ball_handler_id).court
+    team = Map.fetch!(players, ball_handler_id).team
     opponent = opposite(team)
     opponent_lineup = Map.fetch!(game_state, opponent).lineup
     {new_game_state, new_ball_handler} =

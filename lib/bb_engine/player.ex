@@ -7,7 +7,7 @@ defmodule BBEngine.Player do
     :defensive_rating,
     :offensive_rebound,
     :defensive_rebound,
-    :court
+    :team
   ]
 
   def standard_player(id) do

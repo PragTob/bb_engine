@@ -63,7 +63,7 @@ defmodule BBEngine.Actions.TwoPointShot do
 
   defp update_box_score_total(box_score, event = %{shooter: offense}) do
     team =
-      Map.update! box_score.team, offense.court, fn(statistics) ->
+      Map.update! box_score.team, offense.team, fn(statistics) ->
         apply_event(statistics, event)
       end
 

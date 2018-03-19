@@ -46,7 +46,7 @@ defmodule BBEngine.GameState do
   end
 
   defp your_court(players, court) do
-    Enum.map players, fn(player) -> %Player{player | court: court} end
+    Enum.map players, fn(player) -> %Player{player | team: court} end
   end
 
   defp players_map(one_squad, another_squad) do
