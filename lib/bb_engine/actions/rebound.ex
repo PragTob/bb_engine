@@ -12,6 +12,7 @@ defmodule BBEngine.Actions.Rebound do
   alias BBEngine.BoxScore
   alias BBEngine.Events
   alias BBEngine.Player
+  alias BBEngine.Possession
 
   def play(game_state) do
     game_state
@@ -21,13 +22,9 @@ defmodule BBEngine.Actions.Rebound do
 
   defp simulate_action(game_state) do
     offense = game_state.possession
-    defense = opposite(offense)
 
-    defensive_players = GameState.players(game_state, offense)
-    offensive_players = GameState.players(game_state, defense)
-
-    offensive_rebound = Player.skill_map(offensive_players, :offensive_rebound)
-    defensive_rebound = Player.skill_map(defensive_players, :defensive_rebound)
+    offensive_rebound = offense_skills(game_state, offense)
+    defensive_rebound = defense_skills(game_state, Possession.opposite(offense))
 
     rebounding_map =
       Map.merge(offensive_rebound, defensive_rebound, fn _, _, _ -> raise "boom" end)
@@ -39,6 +36,18 @@ defmodule BBEngine.Actions.Rebound do
     {new_game_state, event}
   end
 
+  defp offense_skills(game_state, team) do
+    game_state
+    |> GameState.players(team)
+    |> Player.skill_map(:offensive_rebound)
+  end
+
+  def defense_skills(game_state, team) do
+    game_state
+    |> GameState.players(team)
+    |> Player.skill_map(:defensive_rebound)
+  end
+
   defp update_game_state({game_state, event}) do
     # update box score damn it
     {
@@ -46,8 +55,4 @@ defmodule BBEngine.Actions.Rebound do
       event
     }
   end
-
-  # Temporary copy
-  defp opposite(:home), do: :road
-  defp opposite(:road), do: :home
 end
