@@ -19,7 +19,7 @@ defmodule BBEngine.GameState do
   @minutes_per_quarter 10
   @seconds_per_quarter 60 * @minutes_per_quarter
 
-  def new(home_squad, road_squad, initial_seed) do
+  def new(home_squad, road_squad, initial_seed \\ Random.seed()) do
     {home_squad, road_squad} = set_court(home_squad, road_squad)
     seed = Random.seed(initial_seed)
 
@@ -37,6 +37,13 @@ defmodule BBEngine.GameState do
   end
 
   def seconds_per_quarter, do: @seconds_per_quarter
+
+  def players(game_state, team) do
+    game_state
+    |> Map.fetch!(team)
+    |> Map.fetch!(:lineup)
+    |> Enum.map(fn id -> Map.fetch!(game_state.players, id) end)
+  end
 
   defp set_court(home_squad = %{players: home}, road_squad = %{players: road}) do
     home_squad = %Squad{home_squad | players: your_court(home, :home)}

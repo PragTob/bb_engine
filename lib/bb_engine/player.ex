@@ -10,6 +10,24 @@ defmodule BBEngine.Player do
     :team
   ]
 
+  @type t :: %__MODULE__{
+          id: integer,
+          offensive_rating: number,
+          defensive_rating: number,
+          offensive_rebound: number,
+          defensive_rebound: number,
+          team: :home | :road
+        }
+
+  @type skill :: :offensive_rating | :defensive_rating | :offensive_rebound | :defensive_rebound
+
+  @spec skill_map([t], skill) :: %{t => number}
+  def skill_map(players, skill) do
+    Enum.reduce(players, %{}, fn player = %{^skill => value}, map ->
+      Map.put_new(map, player, value)
+    end)
+  end
+
   def standard_player(id) do
     %__MODULE__{
       id: id,

@@ -11,6 +11,7 @@ defmodule BBEngine.Actions.Rebound do
   alias BBEngine.GameState
   alias BBEngine.BoxScore
   alias BBEngine.Events
+  alias BBEngine.Player
 
   def play(game_state) do
     game_state
@@ -22,11 +23,11 @@ defmodule BBEngine.Actions.Rebound do
     offense = game_state.possession
     defense = opposite(offense)
 
-    defensive_players = players(game_state, offense)
-    offensive_players = players(game_state, defense)
+    defensive_players = GameState.players(game_state, offense)
+    offensive_players = GameState.players(game_state, defense)
 
-    offensive_rebound = skill_map(offensive_players, :offensive_rebound)
-    defensive_rebound = skill_map(defensive_players, :defensive_rebound)
+    offensive_rebound = Player.skill_map(offensive_players, :offensive_rebound)
+    defensive_rebound = Player.skill_map(defensive_players, :defensive_rebound)
 
     rebounding_map =
       Map.merge(offensive_rebound, defensive_rebound, fn _, _, _ -> raise "boom" end)
@@ -36,19 +37,6 @@ defmodule BBEngine.Actions.Rebound do
     event = %Events.Rebound{rebounder: rebounder.id, duration: 2, team: rebounder.team}
 
     {new_game_state, event}
-  end
-
-  defp skill_map(players, skill) do
-    Enum.reduce(players, %{}, fn player = %{^skill => value}, map ->
-      Map.put_new(map, player, value)
-    end)
-  end
-
-  defp players(game_state, team) do
-    game_state
-    |> Map.fetch!(team)
-    |> Map.fetch!(:lineup)
-    |> Enum.map(fn id -> Map.fetch!(game_state.players, id) end)
   end
 
   defp update_game_state({game_state, event}) do
