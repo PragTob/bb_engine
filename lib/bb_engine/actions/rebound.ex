@@ -28,18 +28,18 @@ defmodule BBEngine.Actions.Rebound do
     offensive_rebound = skill_map(offensive_players, :offensive_rebound)
     defensive_rebound = skill_map(defensive_players, :defensive_rebound)
 
-    rebounding_map = Map.merge offensive_rebound, defensive_rebound, fn _, _, _ -> raise "boom" end
-    
+    rebounding_map =
+      Map.merge(offensive_rebound, defensive_rebound, fn _, _, _ -> raise "boom" end)
+
     {new_game_state, rebounder} = Random.weighted(game_state, rebounding_map)
 
-    event =
-      %Events.Rebound{rebounder: rebounder.id, duration: 2, team: rebounder.team}
-    
+    event = %Events.Rebound{rebounder: rebounder.id, duration: 2, team: rebounder.team}
+
     {new_game_state, event}
   end
 
   defp skill_map(players, skill) do
-    Enum.reduce(players, %{}, fn(player = %{^skill => value}, map) ->
+    Enum.reduce(players, %{}, fn player = %{^skill => value}, map ->
       Map.put_new(map, player, value)
     end)
   end
@@ -52,13 +52,12 @@ defmodule BBEngine.Actions.Rebound do
   end
 
   defp update_game_state({game_state, event}) do
-    
     # update box score damn it
     {
       %GameState{game_state | ball_handler_id: event.rebounder, possession: event.team},
       event
     }
-  end  
+  end
 
   # Temporary copy
   defp opposite(:home), do: :road

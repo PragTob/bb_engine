@@ -11,12 +11,17 @@ defmodule BBEngine.Actions.SwitchPossession do
   alias BBEngine.Events.PossessionSwitch
   alias BBEngine.Random
 
-  def play(game_state = %GameState{ball_handler_id: ball_handler_id, players: players}) do
-    team = Map.fetch!(players, ball_handler_id).team
-    opponent = opposite(team)
+  def play(
+        game_state = %GameState{
+          ball_handler_id: ball_handler_id,
+          players: players,
+          possession: possession
+        }
+      ) do
+    opponent = opposite(possession)
     opponent_lineup = Map.fetch!(game_state, opponent).lineup
-    {new_game_state, new_ball_handler} =
-      Random.list_element(game_state, opponent_lineup)
+    {new_game_state, new_ball_handler} = Random.list_element(game_state, opponent_lineup)
+
     event = %PossessionSwitch{
       to_team: opponent,
       to_player: new_ball_handler,
@@ -24,10 +29,7 @@ defmodule BBEngine.Actions.SwitchPossession do
     }
 
     {
-      %GameState{new_game_state |
-        ball_handler_id: new_ball_handler,
-        possession: opponent
-      },
+      %GameState{new_game_state | ball_handler_id: new_ball_handler, possession: opponent},
       event
     }
   end
