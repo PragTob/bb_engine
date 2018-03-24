@@ -23,8 +23,8 @@ defmodule BBEngine.Actions.Rebound do
   defp simulate_action(game_state) do
     offense = game_state.possession
 
-    offensive_rebound = offense_skills(game_state, offense)
-    defensive_rebound = defense_skills(game_state, Possession.opposite(offense))
+    offensive_rebound = skills(game_state, offense, :offensive_rebound)
+    defensive_rebound = skills(game_state, Possession.opposite(offense), :defensive_rebound)
 
     rebounding_map =
       Map.merge(offensive_rebound, defensive_rebound)
@@ -36,16 +36,10 @@ defmodule BBEngine.Actions.Rebound do
     {new_game_state, event}
   end
 
-  defp offense_skills(game_state, team) do
+  defp skills(game_state, team, skill) do
     game_state
     |> GameState.players(team)
-    |> Player.skill_map(:offensive_rebound)
-  end
-
-  def defense_skills(game_state, team) do
-    game_state
-    |> GameState.players(team)
-    |> Player.skill_map(:defensive_rebound)
+    |> Player.skill_map(skill)
   end
 
   defp update_game_state({game_state, event}) do
