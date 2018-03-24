@@ -1,7 +1,8 @@
 defmodule BBEngine.Events.Shot do
   defstruct [
-    :shooter,
-    :defender,
+    :shooter_id,
+    :defender_id,
+    :team,
     :type,
     :success,
     :duration
@@ -26,8 +27,9 @@ defmodule BBEngine.Actions.TwoPointShot do
     ball_handler = Map.fetch! game_state.players, ball_handler_id
     {new_game_state, elapsed_time} = elapsed_time(game_state)
     shot = %Shot{
-      shooter: ball_handler,
-      defender: opponent,
+      shooter_id: ball_handler_id,
+      defender_id: opponent_id,
+      team: ball_handler.team,
       duration: elapsed_time
     }
     {final_game_state, success} =
@@ -52,22 +54,22 @@ defmodule BBEngine.Actions.TwoPointShot do
     %GameState{game_state | box_score: updated_box_score}
   end
 
-  defp update_box_score_shooter(box_score, event = %{shooter: offense}) do
-    individual =
-      Map.update! box_score.individual, offense.id, fn(statisticss) ->
+  defp update_box_score_shooter(box_score, event = %{shooter_id: shooter_id, team: team}) do
+    team_stats =
+      Map.update! box_score[team], shooter_id, fn(statisticss) ->
         apply_event(statisticss, event)
       end
 
-    %BoxScore{box_score | individual: individual}
+    %{box_score | team => team_stats}
   end
 
-  defp update_box_score_total(box_score, event = %{shooter: offense}) do
-    team =
-      Map.update! box_score.team, offense.team, fn(statistics) ->
+  defp update_box_score_total(box_score, event = %{team: team}) do
+    stats =
+      Map.update! box_score[team], :team, fn(statistics) ->
         apply_event(statistics, event)
       end
 
-    %BoxScore{box_score | team: team}
+    %{box_score | team => stats}
   end
 
   defp apply_event(statistics, %Shot{success: true}) do

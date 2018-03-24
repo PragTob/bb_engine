@@ -1,6 +1,6 @@
 defmodule BBEngine.SimulationTest do
   use ExUnit.Case
-  alias BBEngine.{GameState, Player, Squad,  Random}
+  alias BBEngine.{GameState, Player, Squad,  Random, BoxScore}
   import BBEngine.Simulation
 
   @home_squad %Squad{
@@ -15,9 +15,10 @@ defmodule BBEngine.SimulationTest do
   describe ".simulate" do
     test "simulates a whole game and reaches at least reasonable score" do
       game_state = simulate(@home_squad, @road_squad)
-      %GameState{box_score: %{team: team_score}} = game_state
+      %GameState{box_score: box_score} = game_state
+      %BoxScore{home: %{team: home_stats}, road: %{team: road_stats}} = box_score
 
-      total_score = team_score.home.points + team_score.road.points
+      total_score = home_stats.points + road_stats.points
       assert total_score >= 90
 
       assert game_state.clock_seconds <= 0 # should get fixed :D
