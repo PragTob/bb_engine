@@ -1,5 +1,5 @@
 defmodule BBEngine.Simulation do
-  alias BBEngine.{GameState, Actions, Random, Events}
+  alias BBEngine.{GameState, Actions, Random, Events, BoxScore}
 
   def simulate(home_squad, road_squad, seed \\ Random.seed()) do
     # home court advantage?
@@ -43,7 +43,8 @@ defmodule BBEngine.Simulation do
     
     %GameState{new_game_state |
       clock_seconds: time - event.duration,
-      events: [event | new_game_state.events]
+      events: [event | new_game_state.events],
+      box_score: BoxScore.update(new_game_state.box_score, event)
     }
   end
 

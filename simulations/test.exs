@@ -14,6 +14,8 @@ road_squad = %Squad{
 }
 
 game_state = Simulation.simulate(home_squad, road_squad)
+IO.puts "------------------HOME---------------------"
 IO.inspect(game_state.box_score.home.team)
+IO.puts "------------------ROAD---------------------"
 IO.inspect(game_state.box_score.road.team)
 

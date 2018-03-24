@@ -13,13 +13,13 @@ defmodule BBEngine.SimulationTest do
   }
 
   describe ".simulate" do
-    test "simulates a whole game and reaches at least reasonable score" do
+    test "simulates a whole game and reaches at least reasonable stats" do
       game_state = simulate(@home_squad, @road_squad)
       %GameState{box_score: box_score} = game_state
-      %BoxScore{home: %{team: home_stats}, road: %{team: road_stats}} = box_score
+      %BoxScore{home: %{team: home}, road: %{team: road}} = box_score
 
-      total_score = home_stats.points + road_stats.points
-      assert total_score >= 90
+      assert home.points + road.points >= 90
+      assert home.rebounds + road.rebounds >= 50
 
       assert game_state.clock_seconds <= 0 # should get fixed :D
       assert game_state.quarter >= 4
