@@ -49,8 +49,8 @@ defmodule BBEngine.Actions.Rebound do
   end
 
   defp rebound_type(rebounder_team, offense_team)
-  defp rebound_type(team, team), do: "offensive"
-  defp rebound_type(_, _), do: "defensive"
+  defp rebound_type(team, team), do: :offensive
+  defp rebound_type(_, _), do: :defensive
 
   defp update_game_state({game_state, event}) do
     {

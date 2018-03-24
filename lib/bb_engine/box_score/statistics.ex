@@ -13,7 +13,7 @@ defmodule BBEngine.BoxScore.Statistics do
   alias BBEngine.Events.Shot
 
   def apply(statistics, event)
-  def apply(statistics, %Rebound{type: "defensive"}) do
+  def apply(statistics, %Rebound{type: :defensive}) do
     %__MODULE__{
       statistics |
       defensive_rebounds: statistics.defensive_rebounds + 1,
@@ -21,7 +21,7 @@ defmodule BBEngine.BoxScore.Statistics do
     }
   end
 
-  def apply(statistics, %Rebound{type: "offensive"}) do
+  def apply(statistics, %Rebound{type: :offensive}) do
     %__MODULE__{
       statistics |
       offensive_rebounds: statistics.offensive_rebounds + 1,
