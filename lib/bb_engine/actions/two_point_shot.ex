@@ -56,8 +56,8 @@ defmodule BBEngine.Actions.TwoPointShot do
 
   defp update_box_score_shooter(box_score, event = %{shooter_id: shooter_id, team: team}) do
     team_stats =
-      Map.update! box_score[team], shooter_id, fn(statisticss) ->
-        apply_event(statisticss, event)
+      Map.update! box_score[team], shooter_id, fn(statistics) ->
+        apply_event(statistics, event)
       end
 
     %{box_score | team => team_stats}

@@ -14,4 +14,6 @@ road_squad = %Squad{
 }
 
 game_state = Simulation.simulate(home_squad, road_squad)
-IO.inspect(game_state.box_score.team)
+IO.inspect(game_state.box_score.home.team)
+IO.inspect(game_state.box_score.road.team)
+
