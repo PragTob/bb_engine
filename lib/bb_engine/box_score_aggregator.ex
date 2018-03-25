@@ -11,6 +11,7 @@ defmodule BBEngine.BoxScoreAggregator do
     }
   end
 
+  @spec aggregate([BoxScore.squad_statistics], non_neg_integer) :: BoxScore.squad_statistics
   defp aggregate(scores, n) do
     scores
     |> Enum.reduce(fn statistics, acc -> aggregate_statistics(statistics, acc) end)
@@ -25,9 +26,12 @@ defmodule BBEngine.BoxScoreAggregator do
   end
 
   defp adjust_stats(statistics, n) do
-    statistics
-    |> Enum.map(fn {key, value} -> {key, value / n} end)
-    |> Map.new
+    stats =
+      statistics
+      |> Enum.map(fn {key, value} -> {key, value / n} end)
+      |> Map.new
+
+    struct(Statistics, stats)
   end
 
   defp get_statistics_entries do

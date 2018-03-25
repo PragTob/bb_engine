@@ -8,6 +8,15 @@ defmodule BBEngine.BoxScore.Statistics do
     defensive_rebounds: 0,
     rebounds: 0
   ]
+
+  @type t :: %__MODULE__{
+    points: non_neg_integer,
+    field_goals_made: non_neg_integer,
+    field_goals_attempted: non_neg_integer,
+    offensive_rebounds: non_neg_integer,
+    defensive_rebounds: non_neg_integer,
+    rebounds: non_neg_integer
+  }
   
   alias BBEngine.Events.Rebound
   alias BBEngine.Events.Shot

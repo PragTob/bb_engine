@@ -6,7 +6,11 @@ defmodule BBEngine.BoxScore do
     :road
   ]
 
-  @type t :: %{home: map, road: map}
+  @type t :: %__MODULE__{
+    home: squad_statistics,
+    road: squad_statistics
+  }
+  @type squad_statistics :: %{(atom | integer) => Statistics.t}
 
   @behaviour Access
 
