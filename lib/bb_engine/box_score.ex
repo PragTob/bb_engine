@@ -6,6 +6,8 @@ defmodule BBEngine.BoxScore do
     :road
   ]
 
+  @type t :: %{home: map, road: map}
+
   @behaviour Access
 
   defdelegate fetch(term, key), to: Map
