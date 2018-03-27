@@ -23,7 +23,7 @@ defmodule BbEngine.Mixfile do
   defp deps do
     [
       {:benchee, "~> 0.9", only: :dev, github: "PragTob/benchee"},
-      {:mix_test_watch, "~> 0.5", only: :dev, runtime: false},
+      {:ex_guard, "~> 1.3", only: :dev},
       {:dialyxir, "~> 0.5", only: [:dev], runtime: false}
     ]
   end
