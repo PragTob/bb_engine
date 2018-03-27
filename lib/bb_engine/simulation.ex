@@ -1,6 +1,7 @@
 defmodule BBEngine.Simulation do
-  alias BBEngine.{GameState, Actions, Random, Events, BoxScore}
+  alias BBEngine.{GameState, Actions, Random, Event, BoxScore, Squad}
 
+  @spec simulate(Squad.t, Squad.t, Random.state) :: GameState.t
   def simulate(home_squad, road_squad, seed \\ Random.seed()) do
     # home court advantage?
     home_squad
@@ -17,6 +18,7 @@ defmodule BBEngine.Simulation do
   end
 
   @final_quarter 4
+  @spec proceed_simulation(GameState.t) :: GameState.t
   defp proceed_simulation(game_state = %GameState{quarter: @final_quarter, clock_seconds: clocks_seconds})
          when clocks_seconds <= 0 do
     game_state
@@ -28,10 +30,11 @@ defmodule BBEngine.Simulation do
   end
 
   @seconds_per_quarter GameState.seconds_per_quarter()
+  @spec simulate_event(GameState.t) :: GameState.t
   def simulate_event(game_state = %GameState{quarter: quarter, clock_seconds: clocks_seconds})
          when clocks_seconds <= 0 do
     # Do substitutions etc.
-    %GameState{ game_state | quarter: quarter + 1,
+    %GameState{game_state | quarter: quarter + 1,
                              clock_seconds: @seconds_per_quarter}
   end
   def simulate_event(game_state = %GameState{clock_seconds: time}) do
@@ -40,7 +43,7 @@ defmodule BBEngine.Simulation do
       |> determine_action
       |> play_action(game_state)
 
-    
+
     %GameState{new_game_state |
       clock_seconds: time - event.duration,
       events: [event | new_game_state.events],
@@ -48,6 +51,7 @@ defmodule BBEngine.Simulation do
     }
   end
 
+  @spec determine_action(GameState.t) :: module
   defp determine_action(%GameState{events: []}) do
     Actions.TwoPointShot
   end
@@ -55,16 +59,17 @@ defmodule BBEngine.Simulation do
     reaction_action(last_event)
   end
 
-  defp reaction_action(%Events.Shot{success: true}) do
+  defp reaction_action(%Event.Shot{success: true}) do
     Actions.SwitchPossession
   end
-  defp reaction_action(%Events.Shot{success: false}) do
+  defp reaction_action(%Event.Shot{success: false}) do
     Actions.Rebound
   end
   defp reaction_action(_) do
     Actions.TwoPointShot
   end
 
+  @spec play_action(module, GameState.t) :: {GameState.t, Event.t}
   defp play_action(action_module, game_state) do
     action_module.play game_state
   end

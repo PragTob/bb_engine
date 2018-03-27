@@ -5,6 +5,8 @@ defmodule BBEngine.Random do
   """
   alias BBEngine.GameState
 
+  @type state :: :rand.state
+
   def seed(seed_value \\ :rand.seed_s(:exrop)) do
     :rand.seed_s(seed_value)
   end

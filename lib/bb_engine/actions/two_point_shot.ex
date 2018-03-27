@@ -1,4 +1,7 @@
-defmodule BBEngine.Events.Shot do
+defmodule BBEngine.Event.Shot do
+  alias BBEngine.Player
+  alias BBEngine.Possession
+
   defstruct [
     :actor_id,
     :defender_id,
@@ -7,11 +10,21 @@ defmodule BBEngine.Events.Shot do
     :success,
     :duration
   ]
+
+  @type t :: %__MODULE__{
+    actor_id: Player.id,
+    defender_id: Player.id,
+    team: Possession.t,
+    type: nil, #unused atm
+    success: boolean,
+    duration: non_neg_integer
+  }
+
 end
 
 defmodule BBEngine.Actions.TwoPointShot do
   alias BBEngine.Random
-  alias BBEngine.Events.Shot
+  alias BBEngine.Event.Shot
   alias BBEngine.GameState
 
   def play(game_state = %GameState{ball_handler_id: ball_handler_id}) do

@@ -10,8 +10,10 @@ defmodule BBEngine.Player do
     :team
   ]
 
+  @type id :: integer
+
   @type t :: %__MODULE__{
-          id: integer,
+          id: id,
           offensive_rating: number,
           defensive_rating: number,
           offensive_rebound: number,

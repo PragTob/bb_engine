@@ -1,4 +1,7 @@
 defmodule BBEngine.BoxScore.Statistics do
+  alias BBEngine.Event
+  alias BBEngine.Event.Rebound
+  alias BBEngine.Event.Shot
 
   defstruct [
     points: 0,
@@ -17,10 +20,8 @@ defmodule BBEngine.BoxScore.Statistics do
     defensive_rebounds: non_neg_integer,
     rebounds: non_neg_integer
   }
-  
-  alias BBEngine.Events.Rebound
-  alias BBEngine.Events.Shot
 
+  @spec apply(t, Event.t) :: t
   def apply(statistics, event)
   def apply(statistics, %Rebound{type: :defensive}) do
     %__MODULE__{
@@ -46,7 +47,7 @@ defmodule BBEngine.BoxScore.Statistics do
       field_goals_made: statistics.field_goals_made + 1,
     }
   end
-  
+
   def apply(statistics, %Shot{success: false}) do
     %__MODULE__{
       statistics |

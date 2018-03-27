@@ -1,16 +1,26 @@
-defmodule BBEngine.Events.Rebound do
+defmodule BBEngine.Event.Rebound do
+  alias BBEngine.Player
+  alias BBEngine.Possession
+
   defstruct [
     :actor_id,
     :duration,
     :team,
     :type
   ]
+
+  @type t :: %__MODULE__{
+    actor_id: Player.id,
+    duration: non_neg_integer,
+    team: Possession.t,
+    type: :offensive | :defensive
+  }
 end
 
 defmodule BBEngine.Actions.Rebound do
   alias BBEngine.Random
   alias BBEngine.GameState
-  alias BBEngine.Events
+  alias BBEngine.Event
   alias BBEngine.Player
   alias BBEngine.Possession
 
@@ -31,7 +41,7 @@ defmodule BBEngine.Actions.Rebound do
 
     {new_game_state, rebounder} = Random.weighted(game_state, rebounding_map)
 
-    event = %Events.Rebound{
+    event = %Event.Rebound{
       actor_id: rebounder.id,
       duration: 2,
       team: rebounder.team,
