@@ -21,7 +21,7 @@ defmodule BBEngine.Random do
 
   def uniform(game_state = %GameState{current_seed: seed}, n) do
     {random, new_seed} = :rand.uniform_s(n, seed)
-    new_game_state = %GameState{ game_state | current_seed: new_seed}
+    new_game_state = %GameState{game_state | current_seed: new_seed}
     {new_game_state, random}
   end
 
@@ -31,6 +31,7 @@ defmodule BBEngine.Random do
     {new_game_state, Enum.at(list, index)}
   end
 
+  @spec weighted(GameState.t, map) :: {GameState.t, any}
   def weighted(game_state, probability_points) do
     {list, max_value} = Enum.reduce(probability_points, {[], 0}, fn {entity, value}, {list, limit} ->
       to_value = value + limit

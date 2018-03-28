@@ -17,7 +17,7 @@ defmodule BBEngine.GameState do
   ]
 
   @type t :: %__MODULE__{
-    quarter: non_neg_integer,
+    quarter: pos_integer,
     clock_seconds: integer,
     ball_handler_id: Player.id,
     possession: Possession.t,

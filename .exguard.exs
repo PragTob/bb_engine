@@ -7,7 +7,7 @@ guard("elixir test", run_on_start: true)
 |> notification(:auto)
 
 guard("dialyzer", run_on_start: true)
-|> command("mix dialyzer")
+|> command("mix dialyzer --halt-exit-status")
 |> watch(~r{\.(erl|ex|exs|eex|xrl|yrl)\z}i)
 |> ignore(~r{deps})
 |> notification(:auto)
