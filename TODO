@@ -1,0 +1,12 @@
+## Features
+* 24 seconds clock violations (last second shot?)
+* game time violations
+* overtime when tie
+* use real player skills
+* 3 pointers
+* Dunks/Layups/CloseQuarterShots
+* Blocks
+* Steals
+
+## Internal
+* Action Behaviour
