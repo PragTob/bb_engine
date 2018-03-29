@@ -65,9 +65,13 @@ defmodule BBEngine.Actions.Rebound do
     {
       %GameState{game_state |
         ball_handler_id: event.actor_id,
-        possession: event.team
+        possession: event.team,
+        shot_clock: shot_clock_seconds(event)
       },
       event
     }
   end
+
+  defp shot_clock_seconds(%Event.Rebound{type: :offensive}), do: 14
+  defp shot_clock_seconds(_), do: GameState.shot_clock_seconds()
 end

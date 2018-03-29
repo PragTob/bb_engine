@@ -39,7 +39,7 @@ defmodule BBEngine.Simulation do
     %GameState{game_state | quarter: quarter + 1, clock_seconds: @seconds_per_quarter}
   end
 
-  def simulate_event(game_state = %GameState{clock_seconds: time}) do
+  def simulate_event(game_state) do
     {new_game_state, event} =
       game_state
       |> next_action
@@ -47,7 +47,8 @@ defmodule BBEngine.Simulation do
 
     %GameState{
       new_game_state
-      | clock_seconds: time - event.duration,
+      | clock_seconds: new_game_state.clock_seconds - event.duration,
+        shot_clock: new_game_state.shot_clock - shot_clock_duration(event),
         events: [event | new_game_state.events],
         box_score: BoxScore.update(new_game_state.box_score, event)
     }
@@ -87,4 +88,11 @@ defmodule BBEngine.Simulation do
   defp play_action({game_state, action_module}) do
     action_module.play(game_state)
   end
+
+  # Rebound resets the shot clock and while it takes time from the full clock
+  # that duration should not be subtracted from the shot clock as the shot clock
+  # gets reset once someone has control of the ball (rebound complete)
+  @spec shot_clock_duration(Event.t) :: non_neg_integer
+  defp shot_clock_duration(%Event.Rebound{}), do: 0
+  defp shot_clock_duration(%{duration: duration}), do: duration
 end

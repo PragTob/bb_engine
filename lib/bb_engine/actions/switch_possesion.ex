@@ -34,7 +34,12 @@ defmodule BBEngine.Actions.SwitchPossession do
     }
 
     {
-      %GameState{new_game_state | ball_handler_id: new_ball_handler, possession: opponent},
+      %GameState{
+        new_game_state
+        | ball_handler_id: new_ball_handler,
+          possession: opponent,
+          shot_clock: GameState.shot_clock_seconds()
+      },
       event
     }
   end
