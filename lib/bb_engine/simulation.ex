@@ -42,8 +42,8 @@ defmodule BBEngine.Simulation do
   def simulate_event(game_state = %GameState{clock_seconds: time}) do
     {new_game_state, event} =
       game_state
-      |> determine_action
-      |> play_action(game_state)
+      |> next_action
+      |> play_action
 
     %GameState{
       new_game_state
@@ -53,29 +53,38 @@ defmodule BBEngine.Simulation do
     }
   end
 
-  @spec determine_action(GameState.t()) :: module
-  defp determine_action(%GameState{events: []}) do
-    Actions.TwoPointShot
+  @spec next_action(GameState.t()) :: {GameState.t, module}
+  defp next_action(game_state = %GameState{events: []}) do
+    {game_state, Actions.Pass}
   end
 
-  defp determine_action(%GameState{events: [last_event | _]}) do
-    reaction_action(last_event)
+  defp next_action(game_state = %GameState{events: [last_event | _]}) do
+    reaction = reaction_action(last_event)
+    if reaction do
+      {game_state, reaction}
+    else
+      determine_action(game_state)
+    end
   end
 
-  defp reaction_action(%Event.Shot{success: true}) do
-    Actions.SwitchPossession
+  defp reaction_action(%Event.Shot{success: true}), do: Actions.SwitchPossession
+  defp reaction_action(%Event.Shot{success: false}), do: Actions.Rebound
+  defp reaction_action(_), do: nil
+
+  defp determine_action(game_state) do
+    # Obviously needs to get more sophisticated
+    {game_state, rand} = Random.uniform(game_state, 4)
+    action = if rand < 4 do
+               Actions.Pass
+             else
+              Actions.TwoPointShot
+             end
+
+    {game_state, action}
   end
 
-  defp reaction_action(%Event.Shot{success: false}) do
-    Actions.Rebound
-  end
-
-  defp reaction_action(_) do
-    Actions.TwoPointShot
-  end
-
-  @spec play_action(module, GameState.t()) :: {GameState.t(), Event.t()}
-  defp play_action(action_module, game_state) do
+  @spec play_action({GameState.t(), module}) :: {GameState.t(), Event.t()}
+  defp play_action({game_state, action_module}) do
     action_module.play(game_state)
   end
 end

@@ -44,8 +44,8 @@ defmodule BBEngine.Actions.TwoPointShot do
   end
 
   defp elapsed_time(game_state) do
-    {new_game_state, random} = Random.uniform(game_state, 14)
-    elapsed_time = 10 + random
+    {new_game_state, random} = Random.uniform(game_state, 6)
+    elapsed_time = 1 + random
     {new_game_state, elapsed_time}
   end
 end

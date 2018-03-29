@@ -69,11 +69,23 @@ defmodule BBEngine.GameState do
 
   def seconds_per_quarter, do: @seconds_per_quarter
 
+  @spec players(t, Possession.t) :: [Player.t, ...]
   def players(game_state, team) do
+    game_state
+    |> lineup(team)
+    |> Enum.map(fn id -> Map.fetch!(game_state.players, id) end)
+  end
+
+  def offense_lineup(game_state) do
+    # rename possession to offense?
+    lineup(game_state, game_state.possession)
+  end
+
+  @spec lineup(t, Possession.t) :: [Player.id, ...]
+  def lineup(game_state, team) do
     game_state
     |> Map.fetch!(team)
     |> Map.fetch!(:lineup)
-    |> Enum.map(fn id -> Map.fetch!(game_state.players, id) end)
   end
 
   defp set_court(home_squad = %{players: home}, road_squad = %{players: road}) do

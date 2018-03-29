@@ -54,4 +54,7 @@ defmodule BBEngine.BoxScore.Statistics do
       field_goals_attempted: statistics.field_goals_attempted + 1
     }
   end
+
+  # we don't count/apply individual passes atm
+  def apply(statistics, _unrecognized_event), do: statistics
 end
