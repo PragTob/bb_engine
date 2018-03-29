@@ -34,14 +34,8 @@ defmodule BBEngine.BoxScoreAggregator do
     struct(Statistics, stats)
   end
 
-  defp get_statistics_entries do
-    %Statistics{}
-    |> Map.from_struct
-    |> Map.keys
-  end
-
   defp add_statistics(stats1, stats2) do
-    get_statistics_entries()
+    Statistics.stats
     |> Enum.map(fn(entry) -> {entry, Map.fetch!(stats1, entry) + Map.fetch!(stats2, entry)} end)
     |> Map.new
   end
