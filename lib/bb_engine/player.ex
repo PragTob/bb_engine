@@ -10,6 +10,20 @@ defmodule BBEngine.Player do
     :team
   ]
 
+  # Inside Scoring
+  # Mid Range Scoring
+  # 3 Pt Outside Scoring
+  # Perimeter Defense
+  # Inside Defense -- no mid defense? What will be used for mid range shots
+  # Athleticism
+  # Speed
+  # Dribbling
+  # Rebounds
+  # Footwork?
+  # passing
+  # Experience
+
+
   @type id :: integer
 
   @type t :: %__MODULE__{
