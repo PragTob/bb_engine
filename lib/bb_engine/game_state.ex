@@ -28,7 +28,7 @@ defmodule BBEngine.GameState do
     home: Squad.t,
     road: Squad.t,
     players: %{Player.id => Player.t},
-    matchups: map, #unused
+    matchups: %{Player.id => Player.id},
     initial_seed: Random.state,
     current_seed: Random.state,
     shot_clock: non_neg_integer,
@@ -46,7 +46,7 @@ defmodule BBEngine.GameState do
     home: Squad.t,
     road: Squad.t,
     players: %{Player.id => Player.t},
-    matchups: map, #unused
+    matchups: %{Player.id => Player.id},
     initial_seed: Random.state,
     current_seed: Random.state,
     shot_clock: 24,    

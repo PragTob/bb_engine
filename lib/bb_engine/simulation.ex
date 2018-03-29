@@ -64,7 +64,7 @@ defmodule BBEngine.Simulation do
     if reaction do
       {game_state, reaction}
     else
-      determine_action(game_state)
+      {game_state, determine_action(game_state)}
     end
   end
 
@@ -72,16 +72,18 @@ defmodule BBEngine.Simulation do
   defp reaction_action(%Event.Shot{success: false}), do: Action.Rebound
   defp reaction_action(_), do: nil
 
+  @time_critical 8
+  defp determine_action(%GameState{clock_seconds: clock_seconds, shot_clock: shot_clock}) when (clock_seconds <= @time_critical) or (shot_clock <= @time_critical) do
+    Action.Forced
+  end
   defp determine_action(game_state) do
     # Obviously needs to get more sophisticated
     {game_state, rand} = Random.uniform(game_state, 4)
-    action = if rand < 4 do
-               Action.Pass
-             else
-              Action.TwoPointShot
-             end
-
-    {game_state, action}
+    if rand < 4 do
+      Action.Pass
+    else
+      Action.TwoPointShot
+    end
   end
 
   @spec play_action({GameState.t(), module}) :: {GameState.t(), Event.t()}
