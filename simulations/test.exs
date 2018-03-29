@@ -18,4 +18,4 @@ IO.puts "------------------HOME---------------------"
 IO.inspect(game_state.box_score.home.team)
 IO.puts "------------------ROAD---------------------"
 IO.inspect(game_state.box_score.road.team)
-
+IO.puts "\nEvent count: #{length(game_state.events)}"
