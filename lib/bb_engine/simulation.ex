@@ -1,5 +1,5 @@
 defmodule BBEngine.Simulation do
-  alias BBEngine.{GameState, Actions, Random, Event, BoxScore, Squad}
+  alias BBEngine.{GameState, Action, Random, Event, BoxScore, Squad}
 
   @spec simulate(Squad.t(), Squad.t(), Random.state()) :: GameState.t()
   def simulate(home_squad, road_squad, seed \\ Random.seed()) do
@@ -56,7 +56,7 @@ defmodule BBEngine.Simulation do
 
   @spec next_action(GameState.t()) :: {GameState.t, module}
   defp next_action(game_state = %GameState{events: []}) do
-    {game_state, Actions.Pass}
+    {game_state, Action.Pass}
   end
 
   defp next_action(game_state = %GameState{events: [last_event | _]}) do
@@ -68,17 +68,17 @@ defmodule BBEngine.Simulation do
     end
   end
 
-  defp reaction_action(%Event.Shot{success: true}), do: Actions.SwitchPossession
-  defp reaction_action(%Event.Shot{success: false}), do: Actions.Rebound
+  defp reaction_action(%Event.Shot{success: true}), do: Action.SwitchPossession
+  defp reaction_action(%Event.Shot{success: false}), do: Action.Rebound
   defp reaction_action(_), do: nil
 
   defp determine_action(game_state) do
     # Obviously needs to get more sophisticated
     {game_state, rand} = Random.uniform(game_state, 4)
     action = if rand < 4 do
-               Actions.Pass
+               Action.Pass
              else
-              Actions.TwoPointShot
+              Action.TwoPointShot
              end
 
     {game_state, action}

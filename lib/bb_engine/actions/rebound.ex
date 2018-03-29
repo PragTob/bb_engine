@@ -17,7 +17,7 @@ defmodule BBEngine.Event.Rebound do
   }
 end
 
-defmodule BBEngine.Actions.Rebound do
+defmodule BBEngine.Action.Rebound do
   alias BBEngine.Random
   alias BBEngine.GameState
   alias BBEngine.Event

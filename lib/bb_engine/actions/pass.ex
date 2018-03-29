@@ -17,7 +17,7 @@ defmodule BBEngine.Event.Pass do
         }
 end
 
-defmodule BBEngine.Actions.Pass do
+defmodule BBEngine.Action.Pass do
   alias BBEngine.GameState
   alias BBEngine.Random
   alias BBEngine.Event
