@@ -18,8 +18,12 @@ defmodule BBEngine.SimulationTest do
       %GameState{box_score: box_score} = game_state
       %BoxScore{home: %{team: home}, road: %{team: road}} = box_score
 
-      assert home.points + road.points >= 90
-      assert home.rebounds + road.rebounds >= 50
+      total_points = home.points + road.points
+      assert total_points >= 100
+      assert total_points <= 250
+
+      assert total_rebounds = home.rebounds + road.rebounds
+      assert  total_rebounds >= 60
 
       assert game_state.clock_seconds <= 0 # should get fixed :D
       assert game_state.quarter >= 4
@@ -27,7 +31,7 @@ defmodule BBEngine.SimulationTest do
 
     test "simulations are deterministic" do
       seed = Random.seed()
-      game_state =  simulate(@home_squad, @road_squad, seed)
+      game_state  = simulate(@home_squad, @road_squad, seed)
       game_state2 = simulate(@home_squad, @road_squad, seed)
 
       assert game_state == game_state2
