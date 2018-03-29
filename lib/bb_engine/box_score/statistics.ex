@@ -21,6 +21,12 @@ defmodule BBEngine.BoxScore.Statistics do
     rebounds: non_neg_integer
   }
 
+  def stats do
+    %__MODULE__{}
+    |> Map.from_struct
+    |> Map.keys
+  end
+
   @spec apply(t, Event.t) :: t
   def apply(statistics, event)
   def apply(statistics, %Rebound{type: :defensive}) do

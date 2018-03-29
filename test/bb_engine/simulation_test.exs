@@ -27,6 +27,28 @@ defmodule BBEngine.SimulationTest do
 
       assert game_state.clock_seconds <= 0 # should get fixed :D
       assert game_state.quarter >= 4
+
+      assert game_state.shot_clock >= 0
+      assert game_state.shot_clock <= 24
+
+      assert_stats_add_up(box_score.home)
+      assert_stats_add_up(box_score.road)      
+    end
+
+    defp assert_stats_add_up(box_score_stats) do
+      team_stats = box_score_stats.team
+      player_stats = Map.drop(box_score_stats, [:team])
+
+  
+      Enum.each(BoxScore.Statistics.stats(), fn stat ->
+        assert Map.fetch!(team_stats, stat) == summed_stats(player_stats, stat)
+      end)
+    end
+
+    defp summed_stats(player_stats, stat) do
+      player_stats
+      |> Enum.map(fn {_id, stats} -> Map.fetch!(stats, stat) end)
+      |> Enum.sum
     end
 
     test "simulations are deterministic" do

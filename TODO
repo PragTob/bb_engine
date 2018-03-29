@@ -1,5 +1,9 @@
+http://www.fiba.basketball/basketball-rules
+http://www.fiba.basketball/rule-differences
+
 ## Features
 * 24 seconds clock violations (last second shot?)
+  * shot clock reset to at least 14 seconds
 * game time violations
 * overtime when tie
 * use real player skills
@@ -7,6 +11,20 @@
 * Dunks/Layups/CloseQuarterShots
 * Blocks
 * Steals
+* Loose Ballse
+* Fouls
+* Throw in
+* Foul Out
+* Free Throws
+* offensive focus
+* degree of openness to determine if a shot is taken/difficulty of a pass etc.
+* Bonus to score attempts from passes/rebounds
+
+### Nice To have
+* Jump Balls (turning over possession according to FIBA rules)
+* 3 second violations
+* Goaltending
 
 ## Internal
 * Action Behaviour
+* Interface to request on simultation step at a time (for later channel support)

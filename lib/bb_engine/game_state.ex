@@ -1,6 +1,8 @@
 defmodule BBEngine.GameState do
   alias BBEngine.{BoxScore, Squad, Player, Random, Possession}
 
+  @shot_clock_seconds 24
+
   defstruct [
     :quarter,
     :clock_seconds,
@@ -13,6 +15,7 @@ defmodule BBEngine.GameState do
     :matchups,
     :initial_seed,
     :current_seed,
+    shot_clock: @shot_clock_seconds,
     events: []
   ]
 
@@ -28,9 +31,12 @@ defmodule BBEngine.GameState do
     matchups: map, #unused
     initial_seed: Random.state,
     current_seed: Random.state,
+    shot_clock: non_neg_integer,
     events: [BBEngine.Event.t]
   }
 
+  # dialyzer is not amused when it knows that it'll have concrete values
+  # but you try to give it some generic types
   @type initial :: %__MODULE__{
     quarter: 1,
     clock_seconds: 600,
@@ -43,6 +49,7 @@ defmodule BBEngine.GameState do
     matchups: map, #unused
     initial_seed: Random.state,
     current_seed: Random.state,
+    shot_clock: 24,    
     events: []
   }
 
@@ -87,6 +94,8 @@ defmodule BBEngine.GameState do
     |> Map.fetch!(team)
     |> Map.fetch!(:lineup)
   end
+
+  def shot_clock_seconds, do: @shot_clock_seconds
 
   defp set_court(home_squad = %{players: home}, road_squad = %{players: road}) do
     home_squad = %Squad{home_squad | players: your_court(home, :home)}
