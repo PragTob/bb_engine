@@ -18,4 +18,14 @@ IO.puts "------------------HOME---------------------"
 IO.inspect(game_state.box_score.home.team)
 IO.puts "------------------ROAD---------------------"
 IO.inspect(game_state.box_score.road.team)
+
+IO.puts "\nEvent distribution:"
+distribution =
+game_state.events
+|> Enum.group_by(fn event -> event.__struct__ end)
+|> Enum.map(fn {key, values} -> {key, length(values)} end)
+|> Map.new
+
+IO.inspect(distribution)
+
 IO.puts "\nEvent count: #{length(game_state.events)}"
