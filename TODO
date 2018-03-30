@@ -1,9 +1,8 @@
+## Features
 http://www.fiba.basketball/basketball-rules
 http://www.fiba.basketball/rule-differences
 
-## Features
-* 24 seconds clock violations (last second shot?)
-  * shot clock reset to at least 14 seconds
+
 * game time violations
 * overtime when tie
 * use real player skills
@@ -19,8 +18,17 @@ http://www.fiba.basketball/rule-differences
 * offensive focus
 * degree of openness to determine if a shot is taken/difficulty of a pass etc.
 * Bonus to score attempts from passes/rebounds
+* dynamic tactic changes (if minute over bla and bla do substitute player)
+
+## Balance
+http://www.euroleague.net/competition/teams/showteam?clubcode=BAM#!stats
+http://www.euroleague.net/main/statistics?mode=Leaders&entity=Clubs&seasonmode=Single&seasoncode=E2017&cat=TotalRebounds&agg=PerGame
+
+* we're making too many points
+* Too many "Forced Shot" events are happening
 
 ### Nice To have
+* "simple" match viewer that also shows time to spot logical inconsistencies and general dev
 * Jump Balls (turning over possession according to FIBA rules)
 * 3 second violations
 * Goaltending
