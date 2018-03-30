@@ -2,6 +2,7 @@ defmodule BBEngine.BoxScore.Statistics do
   alias BBEngine.Event
   alias BBEngine.Event.Rebound
   alias BBEngine.Event.Shot
+  alias BBEngine.Event.ClockViolation
 
   defstruct [
     points: 0,
@@ -9,7 +10,8 @@ defmodule BBEngine.BoxScore.Statistics do
     field_goals_attempted: 0,
     offensive_rebounds: 0,
     defensive_rebounds: 0,
-    rebounds: 0
+    rebounds: 0,
+    turnovers: 0
   ]
 
   @type t :: %__MODULE__{
@@ -18,7 +20,8 @@ defmodule BBEngine.BoxScore.Statistics do
     field_goals_attempted: non_neg_integer,
     offensive_rebounds: non_neg_integer,
     defensive_rebounds: non_neg_integer,
-    rebounds: non_neg_integer
+    rebounds: non_neg_integer,
+    turnovers: non_neg_integer
   }
 
   def stats do
@@ -58,6 +61,13 @@ defmodule BBEngine.BoxScore.Statistics do
     %__MODULE__{
       statistics |
       field_goals_attempted: statistics.field_goals_attempted + 1
+    }
+  end
+
+  def apply(statistics, %ClockViolation{}) do
+    %__MODULE__{
+      statistics |
+      turnovers: statistics.turnovers + 1
     }
   end
 
