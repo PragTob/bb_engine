@@ -95,6 +95,24 @@ defmodule BBEngine.GameState do
     |> Map.fetch!(:lineup)
   end
 
+  @spec on_ball_matchup(t) :: {Player.t, Player.t}
+  def on_ball_matchup(game_state) do
+    ball_handler = player(game_state, game_state.ball_handler_id)
+    defender = matchup(game_state, ball_handler.id)
+
+    {ball_handler, defender}
+  end
+
+  @spec player(t, Player.id) :: Player.t
+  defp player(game_state, player_id) do
+    Map.fetch! game_state.players, player_id
+  end
+
+  defp matchup(game_state, player_id) do
+    defender_id = Map.fetch!(game_state.matchups, player_id)
+    player(game_state, defender_id)
+  end
+
   def shot_clock_seconds, do: @shot_clock_seconds
 
   defp set_court(home_squad = %{players: home}, road_squad = %{players: road}) do

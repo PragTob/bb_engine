@@ -28,11 +28,10 @@ defmodule BBEngine.Action.TwoPointShot do
   alias BBEngine.GameState
   alias BBEngine.Player
 
-  def play(game_state = %GameState{ball_handler_id: ball_handler_id}) do
-    opponent_id = Map.fetch!(game_state.matchups, ball_handler_id)
-    opponent = Map.fetch! game_state.players, opponent_id
-    ball_handler = Map.fetch! game_state.players, ball_handler_id
-    {game_state, shot_event} = attempt(game_state, ball_handler, opponent)
+  def play(game_state) do
+    {ball_handler, defender} = GameState.on_ball_matchup(game_state)
+    
+    {game_state, shot_event} = attempt(game_state, ball_handler, defender)
     {game_state, elapsed_time} = elapsed_time(game_state)
 
     {game_state, %Event.Shot{shot_event | duration: elapsed_time}}

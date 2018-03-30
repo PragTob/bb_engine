@@ -22,16 +22,14 @@ defmodule BBEngine.Action.Forced do
   alias BBEngine.Action.TwoPointShot
 
   def play(game_state) do
-    ball_handler = Map.fetch! game_state.players, game_state.ball_handler_id
-    opponent_id = Map.fetch!(game_state.matchups, game_state.ball_handler_id)
-    opponent = Map.fetch! game_state.players, opponent_id
+    {ball_handler, defender} = GameState.on_ball_matchup(game_state)
 
-    {game_state, turnover?} = turnover?(game_state, ball_handler, opponent)
+    {game_state, turnover?} = turnover?(game_state, ball_handler, defender)
 
     if turnover? do
       turnover(game_state, ball_handler)
     else
-      shot_attempt(game_state, ball_handler, opponent)
+      shot_attempt(game_state, ball_handler, defender)
     end
   end
 
