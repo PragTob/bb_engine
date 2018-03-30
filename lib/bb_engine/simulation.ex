@@ -56,7 +56,7 @@ defmodule BBEngine.Simulation do
 
   @spec next_action(GameState.t()) :: {GameState.t, module}
   defp next_action(game_state = %GameState{events: []}) do
-    {game_state, Action.Pass}
+    {game_state, Action.Pass} # should be jump ball
   end
 
   defp next_action(game_state = %GameState{events: [last_event | _]}) do
@@ -64,26 +64,30 @@ defmodule BBEngine.Simulation do
     if reaction do
       {game_state, reaction}
     else
-      {game_state, determine_action(game_state)}
+      determine_action(game_state)
     end
   end
 
   defp reaction_action(%Event.Shot{success: true}), do: Action.SwitchPossession
+  # not technically correct, no possession switch if the quarter clock runs out
+  defp reaction_action(%Event.ClockViolation{}), do: Action.SwitchPossession
   defp reaction_action(%Event.Shot{success: false}), do: Action.Rebound
   defp reaction_action(_), do: nil
 
   @time_critical 8
-  defp determine_action(%GameState{clock_seconds: clock_seconds, shot_clock: shot_clock}) when (clock_seconds <= @time_critical) or (shot_clock <= @time_critical) do
-    Action.Forced
+  defp determine_action(gs = %GameState{clock_seconds: clock_seconds, shot_clock: shot_clock}) when (clock_seconds <= @time_critical) or (shot_clock <= @time_critical) do
+    {gs, Action.Forced}
   end
   defp determine_action(game_state) do
     # Obviously needs to get more sophisticated
     {game_state, rand} = Random.uniform(game_state, 4)
-    if rand < 4 do
-      Action.Pass
-    else
-      Action.TwoPointShot
-    end
+    action = if rand < 4 do
+               Action.Pass
+             else
+               Action.TwoPointShot
+             end
+
+    {game_state, action}
   end
 
   @spec play_action({GameState.t(), module}) :: {GameState.t(), Event.t()}
