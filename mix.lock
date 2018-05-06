@@ -1,5 +1,5 @@
 %{
-  "benchee": {:git, "https://github.com/PragTob/benchee.git", "cad62239fd81083a8d665e20ea9414a08cece8d4", []},
+  "benchee": {:hex, :benchee, "0.13.1", "bd93ca05be78bcb6159c7176230efeda2f724f7ffd485515175ca411dff4893e", [:mix], [{:deep_merge, "~> 0.1", [hex: :deep_merge, repo: "hexpm", optional: false]}], "hexpm"},
   "deep_merge": {:hex, :deep_merge, "0.1.1", "c27866a7524a337b6a039eeb8dd4f17d458fd40fbbcb8c54661b71a22fffe846", [:mix], [], "hexpm"},
   "dialyxir": {:hex, :dialyxir, "0.5.1", "b331b091720fd93e878137add264bac4f644e1ddae07a70bf7062c7862c4b952", [:mix], [], "hexpm"},
   "ex_guard": {:hex, :ex_guard, "1.3.0", "0f5c50b90a7e4c599b45d02448ae53eabffc33adb7bfdfc5f5507715e7662a25", [:mix], [{:fs, "~> 0.9", [hex: :fs, repo: "hexpm", optional: false]}], "hexpm"},

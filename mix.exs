@@ -22,7 +22,7 @@ defmodule BbEngine.Mixfile do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:benchee, "~> 0.9", only: :dev, github: "PragTob/benchee"},
+      {:benchee, "~> 0.9", only: :dev},
       {:ex_guard, "~> 1.3", only: :dev},
       {:dialyxir, "~> 0.5", only: [:dev], runtime: false}
     ]
