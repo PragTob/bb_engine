@@ -1,12 +1,18 @@
 defmodule BBEngine.Simulation do
   alias BBEngine.{GameState, Action, Random, Event, BoxScore, Squad}
 
-  @spec simulate(Squad.t(), Squad.t(), Random.state()) :: GameState.t()
-  def simulate(home_squad, road_squad, seed \\ Random.seed()) do
+  @spec new(Squad.t(), Squad.t(), Random.state()) :: GameState.t()
+  def new(home_squad, road_squad, seed \\ Random.seed()) do
     # home court advantage?
     home_squad
     |> GameState.new(road_squad, seed)
     |> jump_ball
+  end
+
+  @spec simulate(Squad.t(), Squad.t(), Random.state()) :: GameState.t()
+  def simulate(home_squad, road_squad, seed \\ Random.seed()) do
+    home_squad
+    |> new(road_squad, seed)
     |> proceed_simulation
   end
 
@@ -18,17 +24,7 @@ defmodule BBEngine.Simulation do
 
   @final_quarter 4
   @spec proceed_simulation(GameState.t()) :: GameState.t()
-  def proceed_simulation(
-        game_state = %GameState{
-          quarter: quarter,
-          clock_seconds: clocks_seconds,
-          box_score: %{
-            home: %{team: %{points: home_points}},
-            road: %{team: %{points: road_points}}
-          }
-        }
-      )
-      when clocks_seconds <= 0 and quarter >= @final_quarter and home_points != road_points do
+  def proceed_simulation({:done, game_state}) do
     game_state
   end
 
@@ -38,12 +34,16 @@ defmodule BBEngine.Simulation do
     |> proceed_simulation
   end
 
-  @spec simulate_event(GameState.t()) :: GameState.t()
-  def simulate_event(game_state = %GameState{quarter: quarter, clock_seconds: clocks_seconds})
-      when clocks_seconds <= 0 do
+  @spec simulate_event(GameState.t()) :: GameState.t() | {:done, GameState.t}
+  def simulate_event(game_state = %GameState{quarter: quarter, clock_seconds: clock_seconds})
+      when (clock_seconds <= 0) do
     # Do substitutions etc.
-    new_quarter = quarter + 1
-    %GameState{game_state | quarter: new_quarter, clock_seconds: quarter_seconds(new_quarter)}
+    if finished?(game_state) do
+      {:done, game_state}
+    else
+      new_quarter = quarter + 1
+      %GameState{game_state | quarter: new_quarter, clock_seconds: quarter_seconds(new_quarter)}
+    end
   end
 
   def simulate_event(game_state) do
@@ -59,6 +59,10 @@ defmodule BBEngine.Simulation do
         events: [event | new_game_state.events],
         box_score: BoxScore.update(new_game_state.box_score, event)
     }
+  end
+
+  defp finished?(game_state) do
+    (game_state.quarter >= @final_quarter) && !BoxScore.tie?(game_state.box_score)
   end
 
   @seconds_per_quarter GameState.seconds_per_quarter()

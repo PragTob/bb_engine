@@ -17,6 +17,7 @@ http://www.fiba.basketball/rule-differences
 * offensive focus
 * degree of openness to determine if a shot is taken/difficulty of a pass etc.
 * Bonus to score attempts from passes/rebounds
+* points per quarter per team breakdown
 * dynamic tactic changes (if minute over bla and bla do substitute player)
 
 ## Balance
@@ -34,3 +35,4 @@ http://www.euroleague.net/main/statistics?mode=Leaders&entity=Clubs&seasonmode=S
 
 ## Internal
 * Action Behaviour
+* switch random module to not always take the game_state but maybe just the seed

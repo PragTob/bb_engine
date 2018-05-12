@@ -47,4 +47,8 @@ defmodule BBEngine.BoxScore do
     player_stats = Enum.map(squad.players, fn player -> {player.id, %Statistics{}} end)
     Map.new([{:team, %Statistics{}} | player_stats])
   end
+
+  def tie?(box_score) do
+    box_score.home.team.points == box_score.road.team.points
+  end
 end

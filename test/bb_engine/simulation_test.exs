@@ -22,6 +22,7 @@ defmodule BBEngine.SimulationTest do
       total_points = home.points + road.points
       assert total_points >= 100
       assert total_points <= 250
+      assert home.points != road.points
 
       assert total_rebounds = home.rebounds + road.rebounds
       assert  total_rebounds >= 60
@@ -82,6 +83,17 @@ defmodule BBEngine.SimulationTest do
       assert game_state.clock_seconds <= 300
       assert game_state.quarter == 5
     end
+
+    test "game ends if scores are different" do
+      assert {:done, game_state} =
+        %{clock_seconds: 0, quarter: 4}
+        |> build_game_state
+        |> add_home_points
+        |> simulate_event
+
+      assert game_state.clock_seconds == 0
+      assert game_state.quarter == 4
+    end
   end
 
   defp build_game_state(override) do
@@ -91,6 +103,20 @@ defmodule BBEngine.SimulationTest do
                  |> Map.put(:possession, :home)
 
     Map.merge(game_state, override)
+  end
+
+  defp add_home_points(game_state) do
+    event = %BBEngine.Event.Shot{
+      actor_id: @ball_handler_id,
+      team: :home,
+      success: true,
+      duration: 2
+    }
+
+    %GameState{
+      game_state
+      | box_score: BoxScore.update(game_state.box_score, event)
+    }
   end
 
   defp assert_stats_add_up(box_score_stats) do

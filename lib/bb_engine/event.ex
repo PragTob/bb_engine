@@ -6,4 +6,5 @@ defmodule BBEngine.Event do
           | Event.Shot.t()
           | Event.PossessionSwitch.t()
           | Event.Pass.t()
+          | Event.ClockViolation.t()
 end
