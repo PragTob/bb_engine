@@ -54,13 +54,15 @@ defmodule BBEngine.Simulation do
     }
   end
 
-  @spec next_action(GameState.t()) :: {GameState.t, module}
+  @spec next_action(GameState.t()) :: {GameState.t(), module}
   defp next_action(game_state = %GameState{events: []}) do
-    {game_state, Action.Pass} # should be jump ball
+    # should be jump ball
+    {game_state, Action.Pass}
   end
 
   defp next_action(game_state = %GameState{events: [last_event | _]}) do
     reaction = reaction_action(last_event)
+
     if reaction do
       {game_state, reaction}
     else
@@ -75,17 +77,21 @@ defmodule BBEngine.Simulation do
   defp reaction_action(_), do: nil
 
   @time_critical 8
-  defp determine_action(gs = %GameState{clock_seconds: clock_seconds, shot_clock: shot_clock}) when (clock_seconds <= @time_critical) or (shot_clock <= @time_critical) do
+  defp determine_action(gs = %GameState{clock_seconds: clock_seconds, shot_clock: shot_clock})
+       when clock_seconds <= @time_critical or shot_clock <= @time_critical do
     {gs, Action.Forced}
   end
+
   defp determine_action(game_state) do
     # Obviously needs to get more sophisticated
     {game_state, rand} = Random.uniform(game_state, 4)
-    action = if rand < 4 do
-               Action.Pass
-             else
-               Action.TwoPointShot
-             end
+
+    action =
+      if rand < 4 do
+        Action.Pass
+      else
+        Action.TwoPointShot
+      end
 
     {game_state, action}
   end
@@ -98,7 +104,7 @@ defmodule BBEngine.Simulation do
   # Rebound resets the shot clock and while it takes time from the full clock
   # that duration should not be subtracted from the shot clock as the shot clock
   # gets reset once someone has control of the ball (rebound complete)
-  @spec shot_clock_duration(Event.t) :: non_neg_integer
+  @spec shot_clock_duration(Event.t()) :: non_neg_integer
   defp shot_clock_duration(%Event.Rebound{}), do: 0
   defp shot_clock_duration(%{duration: duration}), do: duration
 end
