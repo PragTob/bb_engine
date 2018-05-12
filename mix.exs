@@ -24,7 +24,8 @@ defmodule BbEngine.Mixfile do
     [
       {:benchee, "~> 0.9", only: :dev},
       {:ex_guard, "~> 1.3", only: :dev},
-      {:dialyxir, "~> 0.5", only: [:dev], runtime: false}
+      {:dialyxir, "~> 0.5", only: [:dev], runtime: false},
+      {:eflame, "~> 1.0", only: :dev, runtime: false}
     ]
   end
 end
