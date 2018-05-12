@@ -11,6 +11,7 @@ defmodule BBEngine.SimulationTest do
     players: Enum.map((13..24), &Player.standard_player/1),
     lineup: [13, 14, 15, 16, 17]
   }
+  @ball_handler_id 1
 
   describe ".simulate" do
     test "simulates a whole game and reaches at least reasonable stats" do
@@ -32,23 +33,7 @@ defmodule BBEngine.SimulationTest do
       assert game_state.shot_clock <= 24
 
       assert_stats_add_up(box_score.home)
-      assert_stats_add_up(box_score.road)      
-    end
-
-    defp assert_stats_add_up(box_score_stats) do
-      team_stats = box_score_stats.team
-      player_stats = Map.drop(box_score_stats, [:team])
-
-  
-      Enum.each(BoxScore.Statistics.stats(), fn stat ->
-        assert Map.fetch!(team_stats, stat) == summed_stats(player_stats, stat)
-      end)
-    end
-
-    defp summed_stats(player_stats, stat) do
-      player_stats
-      |> Enum.map(fn {_id, stats} -> Map.fetch!(stats, stat) end)
-      |> Enum.sum
+      assert_stats_add_up(box_score.road)
     end
 
     test "simulations are deterministic" do
@@ -60,8 +45,25 @@ defmodule BBEngine.SimulationTest do
     end
   end
 
+  describe ".proceed_simulation" do
+    test "can safely move on to and simulate overtime" do
+      game_state = %{clock_seconds: 0, quarter: 4}
+                   |> build_game_state()
+                   |> proceed_simulation()
+
+      assert game_state.clock_seconds <= 0 # right now one event is simulated
+      assert game_state.quarter >= 5
+      box_score = game_state.box_score
+
+      total_points = box_score.home.team.points + box_score.road.team.points
+      assert total_points >= 12
+
+      assert_stats_add_up(box_score.home)
+      assert_stats_add_up(box_score.road)
+    end
+  end
+
   describe ".simulate_event" do
-    @ball_handler_id 1
     test "quarters move on" do
       game_state = %{clock_seconds: 0, quarter: 2}
                    |> build_game_state
@@ -70,14 +72,41 @@ defmodule BBEngine.SimulationTest do
       assert game_state.clock_seconds > 550 # right now one event is simulated
       assert game_state.quarter == 3
     end
+
+    test "we can go to over time" do
+      game_state = %{clock_seconds: 0, quarter: 4}
+                   |> build_game_state
+                   |> simulate_event
+
+      assert game_state.clock_seconds > 250 # right now one event is simulated
+      assert game_state.clock_seconds <= 300
+      assert game_state.quarter == 5
+    end
   end
 
   defp build_game_state(override) do
     game_state = @home_squad
-                 |> GameState.new(@road_squad, :rand.seed_s(:exrop))
+                 |> GameState.new(@road_squad, Random.seed)
                  |> Map.put(:ball_handler_id, @ball_handler_id)
+                 |> Map.put(:possession, :home)
 
     Map.merge(game_state, override)
+  end
+
+  defp assert_stats_add_up(box_score_stats) do
+    team_stats = box_score_stats.team
+    player_stats = Map.drop(box_score_stats, [:team])
+
+
+    Enum.each(BoxScore.Statistics.stats(), fn stat ->
+      assert Map.fetch!(team_stats, stat) == summed_stats(player_stats, stat)
+    end)
+  end
+
+  defp summed_stats(player_stats, stat) do
+    player_stats
+    |> Enum.map(fn {_id, stats} -> Map.fetch!(stats, stat) end)
+    |> Enum.sum
   end
 
 end

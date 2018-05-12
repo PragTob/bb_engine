@@ -18,25 +18,32 @@ defmodule BBEngine.Simulation do
 
   @final_quarter 4
   @spec proceed_simulation(GameState.t()) :: GameState.t()
-  defp proceed_simulation(
-         game_state = %GameState{quarter: @final_quarter, clock_seconds: clocks_seconds}
-       )
-       when clocks_seconds <= 0 do
+  def proceed_simulation(
+        game_state = %GameState{
+          quarter: quarter,
+          clock_seconds: clocks_seconds,
+          box_score: %{
+            home: %{team: %{points: home_points}},
+            road: %{team: %{points: road_points}}
+          }
+        }
+      )
+      when clocks_seconds <= 0 and quarter >= @final_quarter and home_points != road_points do
     game_state
   end
 
-  defp proceed_simulation(game_state) do
+  def proceed_simulation(game_state) do
     game_state
     |> simulate_event
     |> proceed_simulation
   end
 
-  @seconds_per_quarter GameState.seconds_per_quarter()
   @spec simulate_event(GameState.t()) :: GameState.t()
   def simulate_event(game_state = %GameState{quarter: quarter, clock_seconds: clocks_seconds})
       when clocks_seconds <= 0 do
     # Do substitutions etc.
-    %GameState{game_state | quarter: quarter + 1, clock_seconds: @seconds_per_quarter}
+    new_quarter = quarter + 1
+    %GameState{game_state | quarter: new_quarter, clock_seconds: quarter_seconds(new_quarter)}
   end
 
   def simulate_event(game_state) do
@@ -53,6 +60,11 @@ defmodule BBEngine.Simulation do
         box_score: BoxScore.update(new_game_state.box_score, event)
     }
   end
+
+  @seconds_per_quarter GameState.seconds_per_quarter()
+  @seconds_per_overtime 5 * 60
+  defp quarter_seconds(quarter) when quarter <= @final_quarter, do: @seconds_per_quarter
+  defp quarter_seconds(quarter), do: @seconds_per_overtime
 
   @spec next_action(GameState.t()) :: {GameState.t(), module}
   defp next_action(game_state = %GameState{events: []}) do
