@@ -1,6 +1,6 @@
 language: elixir
-elixir: 1.6.3
-otp_release: 20.2
+elixir: 1.8.1
+otp_release: 21.3
 
 before_script:
   - MIX_ENV=test mix compile --warnings-as-errors
