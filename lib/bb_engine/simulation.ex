@@ -68,7 +68,7 @@ defmodule BBEngine.Simulation do
   @seconds_per_quarter GameState.seconds_per_quarter()
   @seconds_per_overtime 5 * 60
   defp quarter_seconds(quarter) when quarter <= @final_quarter, do: @seconds_per_quarter
-  defp quarter_seconds(quarter), do: @seconds_per_overtime
+  defp quarter_seconds(_quarter), do: @seconds_per_overtime
 
   @spec next_action(GameState.t()) :: {GameState.t(), module}
   defp next_action(game_state = %GameState{events: []}) do
