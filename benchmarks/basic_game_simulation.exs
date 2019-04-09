@@ -13,9 +13,10 @@ road_squad = %Squad{
   lineup: [13, 14, 15, 16, 17]
 }
 
-Benchee.run %{
+Benchee.run(%{
   "basic simulation" => fn ->
     Simulation.simulate(home_squad, road_squad)
   end,
-}, console: [extended_statistics: true],
-memory_time: 3
+},
+  formatters: [{Benchee.Formatters.Console, extended_statistics: true}],
+memory_time: 3)

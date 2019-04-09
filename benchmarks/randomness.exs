@@ -21,9 +21,8 @@ inputs = %{
 
 Benchee.run(
   jobs,
-  console: [extended_statistics: true],
+  formatters: [{Benchee.Formatters.Console, extended_statistics: true}],
   inputs: inputs,
   time: 2,
-  warmup: 1,
-  pre_check: true
+  warmup: 1
 )

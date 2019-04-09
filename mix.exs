@@ -22,7 +22,7 @@ defmodule BbEngine.Mixfile do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:benchee, "~> 0.9", only: :dev},
+      {:benchee, "~> 1.0", only: :dev},
       {:ex_guard, "~> 1.3", only: :dev},
       {:dialyxir, "~> 1.0.0-rc.6", only: [:dev], runtime: false},
       {:eflame, "~> 1.0", only: :dev, runtime: false}
