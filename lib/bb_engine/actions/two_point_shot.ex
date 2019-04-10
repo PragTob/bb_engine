@@ -28,6 +28,10 @@ defmodule BBEngine.Action.TwoPointShot do
   alias BBEngine.GameState
   alias BBEngine.Player
 
+  @behaviour BBEngine.Action
+
+  @impl true
+  @spec play(GameState.t()) :: {GameState.t(), Event.Shot.t()}
   def play(game_state) do
     {ball_handler, defender} = GameState.on_ball_matchup(game_state)
 

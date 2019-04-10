@@ -22,6 +22,10 @@ defmodule BBEngine.Action.Pass do
   alias BBEngine.Random
   alias BBEngine.Event
 
+  @behaviour BBEngine.Action
+
+  @impl true
+  @spec play(GameState.t()) :: {GameState.t(), Event.Pass.t()}
   def play(game_state) do
     game_state
     |> simulate_action()

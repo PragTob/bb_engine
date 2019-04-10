@@ -24,6 +24,10 @@ defmodule BBEngine.Action.Rebound do
   alias BBEngine.Player
   alias BBEngine.Possession
 
+  @behaviour BBEngine.Action
+
+  @impl true
+  @spec play(GameState.t()) :: {GameState.t(), Event.Rebound.t()}
   def play(game_state) do
     game_state
     |> simulate_action()

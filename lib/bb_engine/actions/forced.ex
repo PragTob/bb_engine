@@ -21,6 +21,10 @@ defmodule BBEngine.Action.Forced do
   alias BBEngine.Event
   alias BBEngine.Action.TwoPointShot
 
+  @behaviour BBEngine.Action
+
+  @impl true
+  @spec play(GameState.t()) :: {GameState.t(), Event.Shot.t() | Event.ClockViolation.t()}
   def play(game_state) do
     {ball_handler, defender} = GameState.on_ball_matchup(game_state)
 
