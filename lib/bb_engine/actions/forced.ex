@@ -1,16 +1,18 @@
-defmodule BBEngine.Event.ClockViolation do
+defmodule BBEngine.Event.Turnover do
   alias BBEngine.Player
   alias BBEngine.Possession
 
   defstruct [
     :actor_id,
     :team,
-    duration: 0
+    :type,
+    duration: 0,
   ]
 
   @type t :: %__MODULE__{
           actor_id: Player.id(),
           team: Possession.t(),
+          type: :clock_violation,
           duration: non_neg_integer
         }
 end
@@ -24,7 +26,7 @@ defmodule BBEngine.Action.Forced do
   @behaviour BBEngine.Action
 
   @impl true
-  @spec play(GameState.t()) :: {GameState.t(), Event.Shot.t() | Event.ClockViolation.t()}
+  @spec play(GameState.t()) :: {GameState.t(), Event.Shot.t() | Event.Turnover.t()}
   def play(game_state) do
     {ball_handler, defender} = GameState.on_ball_matchup(game_state)
 
@@ -59,7 +61,7 @@ defmodule BBEngine.Action.Forced do
   defp turnover(game_state, ball_handler) do
     {
       game_state,
-      %Event.ClockViolation{actor_id: ball_handler.id, team: ball_handler.team}
+      %Event.Turnover{actor_id: ball_handler.id, team: ball_handler.team, type: :clock_violation}
     }
   end
 

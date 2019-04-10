@@ -1,6 +1,6 @@
 defmodule BBEngine.BoxScore.Statistics do
   alias BBEngine.Event
-  alias BBEngine.Event.{ClockViolation, Rebound, Shot}
+  alias BBEngine.Event.{Turnover, Rebound, Shot}
 
   defstruct points: 0,
             field_goals_made: 0,
@@ -61,7 +61,7 @@ defmodule BBEngine.BoxScore.Statistics do
     }
   end
 
-  def apply(statistics, %ClockViolation{}) do
+  def apply(statistics, %Turnover{}) do
     %__MODULE__{
       statistics
       | turnovers: statistics.turnovers + 1

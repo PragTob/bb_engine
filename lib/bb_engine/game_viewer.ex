@@ -57,7 +57,7 @@ defmodule BBEngine.GameViewer do
     "And the possession switches to #{event.to_player} from #{event.to_team}"
   end
 
-  defp event_log(event = %Event.ClockViolation{}) do
+  defp event_log(event = %Event.Turnover{type: :clock_violation}) do
     "And #{event.actor_id} took too long and we have a clock violation!"
   end
 
