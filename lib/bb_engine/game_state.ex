@@ -22,8 +22,8 @@ defmodule BBEngine.GameState do
   @type t :: %__MODULE__{
           quarter: pos_integer,
           clock_seconds: integer,
-          ball_handler_id: Player.id(),
-          possession: Possession.t(),
+          ball_handler_id: Player.id() | nil,
+          possession: Possession.t() | nil,
           box_score: BoxScore.t(),
           home: Squad.t(),
           road: Squad.t(),
@@ -32,7 +32,7 @@ defmodule BBEngine.GameState do
           initial_seed: Random.state(),
           current_seed: Random.state(),
           shot_clock: non_neg_integer,
-          events: [BBEngine.Event.t()]
+          events: [BBEngine.Event.t()] | []
         }
 
   # dialyzer is not amused when it knows that it'll have concrete values
@@ -84,6 +84,7 @@ defmodule BBEngine.GameState do
     |> Enum.map(fn id -> Map.fetch!(game_state.players, id) end)
   end
 
+  @spec offense_lineup(t) :: [Player.id()]
   def offense_lineup(game_state) do
     # rename possession to offense?
     lineup(game_state, game_state.possession)
@@ -99,7 +100,7 @@ defmodule BBEngine.GameState do
   @spec on_ball_matchup(t) :: {Player.t(), Player.t()}
   def on_ball_matchup(game_state) do
     ball_handler = player(game_state, game_state.ball_handler_id)
-    defender = matchup(game_state, ball_handler.id)
+    defender = matchup_player(game_state, ball_handler.id)
 
     {ball_handler, defender}
   end
@@ -109,7 +110,7 @@ defmodule BBEngine.GameState do
     Map.fetch!(game_state.players, player_id)
   end
 
-  defp matchup(game_state, player_id) do
+  defp matchup_player(game_state, player_id) do
     defender_id = Map.fetch!(game_state.matchups, player_id)
     player(game_state, defender_id)
   end

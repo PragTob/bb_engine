@@ -11,6 +11,7 @@ defmodule BBEngine.Random do
     :rand.seed_s(seed_value)
   end
 
+  @spec successful?(GameState.t(), number, number) :: {GameState.t(), boolean}
   def successful?(game_state, value, opposing_value) do
     sum = value + opposing_value
 
@@ -20,12 +21,14 @@ defmodule BBEngine.Random do
   end
 
   # BEWARE: uniform returns numbers 1..n so no 0
+  @spec uniform(GameState.t, integer) :: {GameState.t, integer}
   def uniform(game_state = %GameState{current_seed: seed}, n) do
     {random, new_seed} = :rand.uniform_s(n, seed)
     new_game_state = %GameState{game_state | current_seed: new_seed}
     {new_game_state, random}
   end
 
+  @spec list_element(GameState.t(), [any]) :: {GameState.t(), any}
   def list_element(game_state, list) do
     {new_game_state, random} = uniform(game_state, length(list))
     index = random - 1
