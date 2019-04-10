@@ -42,8 +42,9 @@ defmodule BBEngine.Action.Pass do
     {game_state, event}
   end
 
+  @pass_max_duration 5
   defp duration(game_state) do
-    Random.uniform(game_state, 5)
+    Random.uniform(game_state, @pass_max_duration)
   end
 
   defp choose_receiver(game_state) do

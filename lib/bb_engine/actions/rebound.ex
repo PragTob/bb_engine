@@ -30,6 +30,7 @@ defmodule BBEngine.Action.Rebound do
     |> update_game_state()
   end
 
+  @rebound_duration 2
   defp simulate_action(game_state) do
     offense = game_state.possession
 
@@ -43,7 +44,7 @@ defmodule BBEngine.Action.Rebound do
 
     event = %Event.Rebound{
       actor_id: rebounder.id,
-      duration: 2,
+      duration: @rebound_duration,
       team: rebounder.team,
       type: rebound_type(rebounder.team, offense)
     }

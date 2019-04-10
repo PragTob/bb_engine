@@ -1,5 +1,7 @@
 defmodule BBEngine.BoxScore do
   alias BBEngine.BoxScore.Statistics
+  alias BBEngine.Player
+
 
   defstruct [
     :home,
@@ -10,7 +12,7 @@ defmodule BBEngine.BoxScore do
     home: squad_statistics,
     road: squad_statistics
   }
-  @type squad_statistics :: %{(atom | integer) => Statistics.t}
+  @type squad_statistics :: %{(:team | Player.id()) => Statistics.t}
 
   @behaviour Access
 
@@ -19,7 +21,6 @@ defmodule BBEngine.BoxScore do
   defdelegate get_and_update(data, key, function), to: Map
   defdelegate pop(data, key), to: Map
 
-  alias BBEngine.BoxScore.Statistics
 
   def new(home_squad, away_squad) do
     %__MODULE__{

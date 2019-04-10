@@ -1,8 +1,6 @@
 defmodule BBEngine.BoxScore.Statistics do
   alias BBEngine.Event
-  alias BBEngine.Event.Rebound
-  alias BBEngine.Event.Shot
-  alias BBEngine.Event.ClockViolation
+  alias BBEngine.Event.{ClockViolation, Rebound, Shot}
 
   defstruct [
     points: 0,

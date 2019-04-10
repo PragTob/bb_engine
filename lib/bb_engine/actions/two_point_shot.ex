@@ -30,7 +30,7 @@ defmodule BBEngine.Action.TwoPointShot do
 
   def play(game_state) do
     {ball_handler, defender} = GameState.on_ball_matchup(game_state)
-    
+
     {game_state, shot_event} = attempt(game_state, ball_handler, defender)
     {game_state, elapsed_time} = elapsed_time(game_state)
 
@@ -53,7 +53,8 @@ defmodule BBEngine.Action.TwoPointShot do
     {game_state, event}
   end
 
+  @max_duration 6
   defp elapsed_time(game_state) do
-    Random.uniform(game_state, 6)
+    Random.uniform(game_state, @max_duration)
   end
 end
