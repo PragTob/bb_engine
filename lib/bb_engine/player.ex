@@ -23,7 +23,6 @@ defmodule BBEngine.Player do
   # passing
   # Experience
 
-
   @type id :: integer
 
   @type t :: %__MODULE__{

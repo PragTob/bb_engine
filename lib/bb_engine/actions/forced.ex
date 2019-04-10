@@ -9,10 +9,10 @@ defmodule BBEngine.Event.ClockViolation do
   ]
 
   @type t :: %__MODULE__{
-    actor_id: Player.id,
-    team: Possession.t,
-    duration: non_neg_integer
-  }
+          actor_id: Player.id(),
+          team: Possession.t(),
+          duration: non_neg_integer
+        }
 end
 
 defmodule BBEngine.Action.Forced do
@@ -44,7 +44,9 @@ defmodule BBEngine.Action.Forced do
     # skills but also dependent on experience - might even become a boon for
     # very special players sometimes
     # We could also pass here.. dunnoo... also on the time.
-    {game_state, shot_event} = TwoPointShot.attempt(game_state, ball_handler, defender, @forced_shot_malus)
+    {game_state, shot_event} =
+      TwoPointShot.attempt(game_state, ball_handler, defender, @forced_shot_malus)
+
     {game_state, elapsed_time} = elapsed_time(game_state)
 
     {game_state, %Event.Shot{shot_event | duration: elapsed_time}}

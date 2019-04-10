@@ -2,17 +2,16 @@ defmodule BBEngine.BoxScore do
   alias BBEngine.BoxScore.Statistics
   alias BBEngine.Player
 
-
   defstruct [
     :home,
     :road
   ]
 
   @type t :: %__MODULE__{
-    home: squad_statistics,
-    road: squad_statistics
-  }
-  @type squad_statistics :: %{(:team | Player.id()) => Statistics.t}
+          home: squad_statistics,
+          road: squad_statistics
+        }
+  @type squad_statistics :: %{(:team | Player.id()) => Statistics.t()}
 
   @behaviour Access
 
@@ -20,7 +19,6 @@ defmodule BBEngine.BoxScore do
   defdelegate get(term, key, default), to: Map
   defdelegate get_and_update(data, key, function), to: Map
   defdelegate pop(data, key), to: Map
-
 
   def new(home_squad, away_squad) do
     %__MODULE__{
@@ -30,16 +28,19 @@ defmodule BBEngine.BoxScore do
   end
 
   def update(box_score, event = %{team: team, actor_id: actor_id}) do
-    squad_box_score = Map.fetch! box_score, team
+    squad_box_score = Map.fetch!(box_score, team)
     individual_box_score = Statistics.apply(squad_box_score[actor_id], event)
     team_box_score = Statistics.apply(squad_box_score[:team], event)
+
     updated_squad_box_score = %{
-      squad_box_score |
-      actor_id => individual_box_score,
-      team: team_box_score
+      squad_box_score
+      | actor_id => individual_box_score,
+        team: team_box_score
     }
+
     %{box_score | team => updated_squad_box_score}
   end
+
   # We currently ignore the possession switch... we could count them but does
   # that interest anyone?
   def update(box_score, _event_without_actors), do: box_score

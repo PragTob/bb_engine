@@ -5,7 +5,7 @@ defmodule BBEngine.Random do
   """
   alias BBEngine.GameState
 
-  @type state :: :rand.state
+  @type state :: :rand.state()
 
   def seed(seed_value \\ :rand.seed_s(:exrop)) do
     :rand.seed_s(seed_value)
@@ -32,13 +32,15 @@ defmodule BBEngine.Random do
     {new_game_state, Enum.at(list, index)}
   end
 
-  @spec weighted(GameState.t, map) :: {GameState.t, any}
+  @spec weighted(GameState.t(), map) :: {GameState.t(), any}
   def weighted(game_state, probability_points) do
-    {list, max_value} = Enum.reduce(probability_points, {[], 0}, fn {entity, value}, {list, limit} ->
-      to_value = value + limit
-      {[{to_value, entity} | list], to_value}
-    end)
-    list = Enum.reverse list
+    {list, max_value} =
+      Enum.reduce(probability_points, {[], 0}, fn {entity, value}, {list, limit} ->
+        to_value = value + limit
+        {[{to_value, entity} | list], to_value}
+      end)
+
+    list = Enum.reverse(list)
     {new_game_state, random} = uniform(game_state, max_value)
     {_, winner} = Enum.find(list, fn {value, _element} -> random <= value end)
     {new_game_state, winner}

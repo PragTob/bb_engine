@@ -12,14 +12,14 @@ defmodule BBEngine.Event.Shot do
   ]
 
   @type t :: %__MODULE__{
-    actor_id: Player.id,
-    defender_id: Player.id,
-    team: Possession.t,
-    type: nil, #unused atm
-    success: boolean,
-    duration: non_neg_integer
-  }
-
+          actor_id: Player.id(),
+          defender_id: Player.id(),
+          team: Possession.t(),
+          # unused atm
+          type: nil,
+          success: boolean,
+          duration: non_neg_integer
+        }
 end
 
 defmodule BBEngine.Action.TwoPointShot do
@@ -37,17 +37,22 @@ defmodule BBEngine.Action.TwoPointShot do
     {game_state, %Event.Shot{shot_event | duration: elapsed_time}}
   end
 
-  @spec attempt(GameState.t, Player.t, Player.t, number) :: {GameState.t, Event.Shot.t}
+  @spec attempt(GameState.t(), Player.t(), Player.t(), number) :: {GameState.t(), Event.Shot.t()}
   def attempt(game_state, ball_handler, opponent, offensive_malus \\ 0) do
     {game_state, success} =
-      Random.successful?(game_state, ball_handler.offensive_rating - offensive_malus, opponent.defensive_rating)
+      Random.successful?(
+        game_state,
+        ball_handler.offensive_rating - offensive_malus,
+        opponent.defensive_rating
+      )
 
     event = %Event.Shot{
       actor_id: ball_handler.id,
       defender_id: opponent.id,
       team: ball_handler.team,
       success: success,
-      duration: 0 # honestly hack so don't have to define another type
+      # honestly hack so don't have to define another type
+      duration: 0
     }
 
     {game_state, event}

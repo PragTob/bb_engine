@@ -9,10 +9,10 @@ defmodule BBEngine.Event.PossessionSwitch do
   ]
 
   @type t :: %__MODULE__{
-    to_team: Possession.t,
-    to_player: Player.id,
-    duration: non_neg_integer
-  }
+          to_team: Possession.t(),
+          to_player: Player.id(),
+          duration: non_neg_integer
+        }
 end
 
 defmodule BBEngine.Action.SwitchPossession do

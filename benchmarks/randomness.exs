@@ -1,6 +1,7 @@
 algorithms = [:exs64, :exsplus, :exsp, :exs1024, :exs1024s, :exrop]
 
-jobs = Enum.map(algorithms, fn algorithm ->
+jobs =
+  Enum.map(algorithms, fn algorithm ->
     {
       "#{algorithm} uniform",
       {
@@ -11,8 +12,7 @@ jobs = Enum.map(algorithms, fn algorithm ->
         end
       }
     }
-  end
-)
+  end)
 
 inputs = %{
   "100" => 100,

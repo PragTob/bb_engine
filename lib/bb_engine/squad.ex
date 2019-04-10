@@ -8,8 +8,8 @@ defmodule BBEngine.Squad do
   ]
 
   @type t :: %__MODULE__{
-    lineup: [Player.id],
-    bench: [Player.id],
-    players: [Player.t]
-  }
+          lineup: [Player.id()],
+          bench: [Player.id()],
+          players: [Player.t()]
+        }
 end

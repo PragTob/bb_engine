@@ -1,5 +1,5 @@
 defmodule BBEngine.GameViewer do
-  alias BBEngine.{GameState,Random, Event, Squad, Simulation}
+  alias BBEngine.{GameState, Random, Event, Squad, Simulation}
 
   @spec simulate(Squad.t(), Squad.t(), Random.state()) :: GameState.t()
   def simulate(home_squad, road_squad, seed \\ Random.seed()) do
@@ -14,7 +14,7 @@ defmodule BBEngine.GameViewer do
 
   defp proceed_simulation(game_state) do
     game_state
-    |> Simulation.simulate_event
+    |> Simulation.simulate_event()
     |> log_event
     |> proceed_simulation
   end
@@ -22,13 +22,13 @@ defmodule BBEngine.GameViewer do
   defp log_event(game_state = %{events: [current_event | _]}) do
     game_state
     |> log_it(current_event)
-    |> IO.puts
+    |> IO.puts()
 
     game_state
   end
 
   defp log_event({:done, game_state}) do
-    IO.puts "game is over apparently"
+    IO.puts("game is over apparently")
     {:done, game_state}
   end
 

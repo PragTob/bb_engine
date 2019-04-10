@@ -34,9 +34,9 @@ defmodule BBEngine.Simulation do
     |> proceed_simulation
   end
 
-  @spec simulate_event(GameState.t()) :: GameState.t() | {:done, GameState.t}
+  @spec simulate_event(GameState.t()) :: GameState.t() | {:done, GameState.t()}
   def simulate_event(game_state = %GameState{quarter: quarter, clock_seconds: clock_seconds})
-      when (clock_seconds <= 0) do
+      when clock_seconds <= 0 do
     # Do substitutions etc.
     if finished?(game_state) do
       {:done, game_state}
@@ -62,7 +62,7 @@ defmodule BBEngine.Simulation do
   end
 
   defp finished?(game_state) do
-    (game_state.quarter >= @final_quarter) && !BoxScore.tie?(game_state.box_score)
+    game_state.quarter >= @final_quarter && !BoxScore.tie?(game_state.box_score)
   end
 
   @seconds_per_quarter GameState.seconds_per_quarter()

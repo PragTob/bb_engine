@@ -10,11 +10,11 @@ defmodule BBEngine.Event.Rebound do
   ]
 
   @type t :: %__MODULE__{
-    actor_id: Player.id,
-    duration: non_neg_integer,
-    team: Possession.t,
-    type: :offensive | :defensive
-  }
+          actor_id: Player.id(),
+          duration: non_neg_integer,
+          team: Possession.t(),
+          type: :offensive | :defensive
+        }
 end
 
 defmodule BBEngine.Action.Rebound do
@@ -37,8 +37,7 @@ defmodule BBEngine.Action.Rebound do
     offensive_rebound = skills(game_state, offense, :offensive_rebound)
     defensive_rebound = skills(game_state, Possession.opposite(offense), :defensive_rebound)
 
-    rebounding_map =
-      Map.merge(offensive_rebound, defensive_rebound)
+    rebounding_map = Map.merge(offensive_rebound, defensive_rebound)
 
     {new_game_state, rebounder} = Random.weighted(game_state, rebounding_map)
 
@@ -64,10 +63,11 @@ defmodule BBEngine.Action.Rebound do
 
   defp update_game_state({game_state, event}) do
     {
-      %GameState{game_state |
-        ball_handler_id: event.actor_id,
-        possession: event.team,
-        shot_clock: shot_clock_seconds(event)
+      %GameState{
+        game_state
+        | ball_handler_id: event.actor_id,
+          possession: event.team,
+          shot_clock: shot_clock_seconds(event)
       },
       event
     }
