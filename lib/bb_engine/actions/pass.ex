@@ -21,8 +21,9 @@ defmodule BBEngine.Action.Pass do
     {ball_handler, defender} = GameState.on_ball_matchup(game_state)
 
     # obviously these should take into account dribbling, experience, passing etc...
+    # it also very obviously needs some work...
     force_turn_over_score =
-      ball_handler.offensive_rating - @force_turnover_skill_modifier * defender.defensive_rating
+      @force_turnover_skill_modifier * (defender.defensive_rating - ball_handler.offensive_rating)
 
     probabilities = %{
       pass: ball_handler.offensive_rating,
