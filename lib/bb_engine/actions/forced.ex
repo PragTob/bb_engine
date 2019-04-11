@@ -44,7 +44,7 @@ defmodule BBEngine.Action.Forced do
     Random.successful?(game_state, ball_handler.offensive_rating, opponent.defensive_rating)
   end
 
-  @forced_shot_malus 15
+  @forced_shot_malus -15
   defp shot_attempt(game_state, ball_handler, defender) do
     # TODO: make the malus dependent on the player... like a percent of their
     # skills but also dependent on experience - might even become a boon for

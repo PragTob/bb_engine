@@ -1,29 +1,4 @@
-defmodule BBEngine.Event.Shot do
-  alias BBEngine.Player
-  alias BBEngine.Possession
-
-  defstruct [
-    :actor_id,
-    :defender_id,
-    :team,
-    :type,
-    :points,
-    :success,
-    :duration
-  ]
-
-  @type t :: %__MODULE__{
-          actor_id: Player.id(),
-          defender_id: Player.id(),
-          team: Possession.t(),
-          type: :midrange | :threepoint,
-          points: 1..3,
-          success: boolean,
-          duration: non_neg_integer
-        }
-end
-
-defmodule BBEngine.Action.TwoPointShot do
+defmodule BBEngine.Action.ThreePointShot do
   alias BBEngine.Random
   alias BBEngine.Event
   alias BBEngine.GameState
@@ -44,12 +19,13 @@ defmodule BBEngine.Action.TwoPointShot do
     {game_state, event}
   end
 
+  @three_point_difficulty_modifier 0.5
   @spec attempt(GameState.t(), Player.t(), Player.t(), number) :: {GameState.t(), Event.Shot.t()}
   def attempt(game_state, ball_handler, opponent, offensive_adjustment \\ 0) do
     {game_state, success} =
       Random.successful?(
         game_state,
-        ball_handler.offensive_rating + offensive_adjustment,
+        (ball_handler.offensive_rating + offensive_adjustment) * @three_point_difficulty_modifier,
         opponent.defensive_rating
       )
 
@@ -58,8 +34,8 @@ defmodule BBEngine.Action.TwoPointShot do
       defender_id: opponent.id,
       team: ball_handler.team,
       success: success,
-      type: :midrange,
-      points: 2,
+      type: :threepoint,
+      points: 3,
       # honestly hack so don't have to define another type
       duration: 0
     }

@@ -15,9 +15,17 @@ defmodule BBEngine.Random do
   def successful?(game_state, value, opposing_value) do
     sum = value + opposing_value
 
-    {new_game_state, random} = uniform(game_state, sum)
+    {new_game_state, random} = uniform(game_state)
 
-    {new_game_state, random <= value}
+    {new_game_state, random * sum <= value}
+  end
+
+  # BEWARE: uniform returns numbers  0.0 <= n < 1.0 so no 1.0 nut 0.0
+  @spec uniform(GameState.t()) :: {GameState.t(), float}
+  def uniform(game_state = %GameState{current_seed: seed}) do
+    {random, new_seed} = :rand.uniform_s(seed)
+    new_game_state = %GameState{game_state | current_seed: new_seed}
+    {new_game_state, random}
   end
 
   # BEWARE: uniform returns numbers 1..n so no 0

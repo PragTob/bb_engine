@@ -60,7 +60,7 @@ defmodule BBEngine.SimulationTest do
       box_score = game_state.box_score
 
       total_points = box_score.home.team.points + box_score.road.team.points
-      assert total_points >= 12
+      assert total_points >= 8
 
       assert_stats_add_up(box_score.home)
       assert_stats_add_up(box_score.road)
@@ -118,7 +118,8 @@ defmodule BBEngine.SimulationTest do
       actor_id: @ball_handler_id,
       team: :home,
       success: true,
-      duration: 2
+      duration: 2,
+      points: 2
     }
 
     %GameState{

@@ -5,6 +5,10 @@ defmodule BBEngine.BoxScore.Statistics do
   defstruct points: 0,
             field_goals_made: 0,
             field_goals_attempted: 0,
+            two_points_made: 0,
+            two_points_attempted: 0,
+            three_points_made: 0,
+            three_points_attempted: 0,
             offensive_rebounds: 0,
             defensive_rebounds: 0,
             rebounds: 0,
@@ -14,6 +18,10 @@ defmodule BBEngine.BoxScore.Statistics do
           points: non_neg_integer,
           field_goals_made: non_neg_integer,
           field_goals_attempted: non_neg_integer,
+          two_points_made: non_neg_integer,
+          two_points_attempted: non_neg_integer,
+          three_points_made: non_neg_integer,
+          three_points_attempted: non_neg_integer,
           offensive_rebounds: non_neg_integer,
           defensive_rebounds: non_neg_integer,
           rebounds: non_neg_integer,
@@ -45,19 +53,41 @@ defmodule BBEngine.BoxScore.Statistics do
     }
   end
 
-  def apply(statistics, %Shot{success: true}) do
+  def apply(statistics, shot = %Shot{success: true, points: 2}) do
     %__MODULE__{
       statistics
-      | points: statistics.points + 2,
+      | points: statistics.points + shot.points,
         field_goals_attempted: statistics.field_goals_attempted + 1,
-        field_goals_made: statistics.field_goals_made + 1
+        field_goals_made: statistics.field_goals_made + 1,
+        two_points_attempted: statistics.two_points_attempted + 1,
+        two_points_made: statistics.two_points_made + 1
     }
   end
 
-  def apply(statistics, %Shot{success: false}) do
+  def apply(statistics, shot = %Shot{success: true, points: 3}) do
     %__MODULE__{
       statistics
-      | field_goals_attempted: statistics.field_goals_attempted + 1
+      | points: statistics.points + shot.points,
+        field_goals_attempted: statistics.field_goals_attempted + 1,
+        field_goals_made: statistics.field_goals_made + 1,
+        three_points_attempted: statistics.three_points_attempted + 1,
+        three_points_made: statistics.three_points_made + 1
+    }
+  end
+
+  def apply(statistics, %Shot{success: false, points: 2}) do
+    %__MODULE__{
+      statistics
+      | field_goals_attempted: statistics.field_goals_attempted + 1,
+        two_points_attempted: statistics.two_points_attempted + 1
+    }
+  end
+
+  def apply(statistics, %Shot{success: false, points: 3}) do
+    %__MODULE__{
+      statistics
+      | field_goals_attempted: statistics.field_goals_attempted + 1,
+        three_points_attempted: statistics.three_points_attempted + 1
     }
   end
 
