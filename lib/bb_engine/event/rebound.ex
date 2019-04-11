@@ -2,7 +2,6 @@ defmodule BBEngine.Event.Rebound do
   alias BBEngine.Player
   alias BBEngine.Possession
   alias BBEngine.GameState
-  alias BBEngine.Event
   alias BBEngine.BoxScore.Statistics
 
   defstruct [

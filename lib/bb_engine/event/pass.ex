@@ -1,7 +1,6 @@
 defmodule BBEngine.Event.Pass do
   alias BBEngine.Player
   alias BBEngine.Possession
-  alias BBEngine.GameState
 
   defstruct [
     :actor_id,

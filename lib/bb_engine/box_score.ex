@@ -1,5 +1,4 @@
 defmodule BBEngine.BoxScore do
-  alias BBEngine.BoxScore
   alias BBEngine.BoxScore.Statistics
   alias BBEngine.Event
   alias BBEngine.Player
