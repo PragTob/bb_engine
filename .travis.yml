@@ -6,6 +6,7 @@ before_script:
   - MIX_ENV=test mix compile --warnings-as-errors
   - travis_wait mix dialyzer --plt
 script:
+  - mix format --check-formatted
   - mix dialyzer --halt-exit-status
   - mix test
 
