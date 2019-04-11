@@ -104,7 +104,7 @@ defmodule BBEngine.Simulation do
   @three_point_distribution 93..@pass_shot_distribution_total
   defp determine_action(game_state) do
     # Obviously needs to get more sophisticated
-    {game_state, rand} = Random.uniform(game_state, @pass_shot_distribution_total)
+    {game_state, rand} = Random.uniform_int(game_state, @pass_shot_distribution_total)
 
     action =
       case rand do

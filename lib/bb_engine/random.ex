@@ -28,9 +28,15 @@ defmodule BBEngine.Random do
     {new_game_state, random}
   end
 
+  @spec uniform(GameState.t(), number) :: {GameState.t(), float}
+  def uniform(game_state, max_number) do
+    {new_game_state, random} = uniform(game_state)
+    {new_game_state, random * max_number}
+  end
+
   # BEWARE: uniform returns numbers 1..n so no 0
-  @spec uniform(GameState.t(), integer) :: {GameState.t(), integer}
-  def uniform(game_state = %GameState{current_seed: seed}, n) do
+  @spec uniform_int(GameState.t(), integer) :: {GameState.t(), integer}
+  def uniform_int(game_state = %GameState{current_seed: seed}, n) do
     {random, new_seed} = :rand.uniform_s(n, seed)
     new_game_state = %GameState{game_state | current_seed: new_seed}
     {new_game_state, random}
@@ -38,12 +44,16 @@ defmodule BBEngine.Random do
 
   @spec list_element(GameState.t(), [any]) :: {GameState.t(), any}
   def list_element(game_state, list) do
-    {new_game_state, random} = uniform(game_state, length(list))
+    {new_game_state, random} = uniform_int(game_state, length(list))
     index = random - 1
     {new_game_state, Enum.at(list, index)}
   end
 
-  @spec weighted(GameState.t(), map) :: {GameState.t(), any}
+  @type option :: any
+  # negative numbers mess this up, safe guard against it
+  @type probability :: number
+  @type weighted_map :: %{option => probability}
+  @spec weighted(GameState.t(), weighted_map) :: {GameState.t(), any}
   def weighted(game_state, probability_points) do
     {list, max_value} =
       Enum.reduce(probability_points, {[], 0}, fn {entity, value}, {list, limit} ->

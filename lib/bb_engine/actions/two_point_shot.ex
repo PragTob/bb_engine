@@ -44,6 +44,6 @@ defmodule BBEngine.Action.TwoPointShot do
 
   @max_duration 6
   defp elapsed_time(game_state) do
-    Random.uniform(game_state, @max_duration)
+    Random.uniform_int(game_state, @max_duration)
   end
 end

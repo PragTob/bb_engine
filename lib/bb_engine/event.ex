@@ -20,4 +20,5 @@ defmodule BBEngine.Event do
           | Event.PossessionSwitch.t()
           | Event.Pass.t()
           | Event.Turnover.t()
+          | Event.Steal.t()
 end

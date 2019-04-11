@@ -110,8 +110,13 @@ defmodule BBEngine.GameState do
     Map.fetch!(game_state.players, player_id)
   end
 
+  @spec matchup_player_id(t, Player.id()) :: Player.id()
+  def matchup_player_id(game_state, player_id) do
+    Map.fetch!(game_state.matchups, player_id)
+  end
+
   defp matchup_player(game_state, player_id) do
-    defender_id = Map.fetch!(game_state.matchups, player_id)
+    defender_id = matchup_player_id(game_state, player_id)
     player(game_state, defender_id)
   end
 

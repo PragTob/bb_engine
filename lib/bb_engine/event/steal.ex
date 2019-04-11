@@ -1,4 +1,4 @@
-defmodule BBEngine.Event.Turnover do
+defmodule BBEngine.Event.Steal do
   alias BBEngine.Player
   alias BBEngine.Possession
 
@@ -12,15 +12,15 @@ defmodule BBEngine.Event.Turnover do
 
   defstruct [
     :actor_id,
+    :stolen_from,
     :team,
-    :type,
-    duration: 0
+    :duration
   ]
 
   @type t :: %__MODULE__{
           actor_id: Player.id(),
+          stolen_from: Player.id(),
           team: Possession.t(),
-          type: :clock_violation,
           duration: non_neg_integer
         }
 end
