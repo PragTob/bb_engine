@@ -24,8 +24,6 @@ Benchee.run(
   formatters: [{Benchee.Formatters.Console, extended_statistics: true}],
   memory_time: 3
 )
-<<<<<<< HEAD
-=======
 
 # Operating System: Linux
 # CPU Information: Intel(R) Core(TM) i7-4790 CPU @ 3.60GHz
@@ -61,4 +59,3 @@ Benchee.run(
 
 # Name                     minimum        maximum    sample size                     mode
 # basic simulation         2.59 MB        3.44 MB            6942.73 MB, 2.74 MB, 2.73 MB
->>>>>>> aac0c37... wip
