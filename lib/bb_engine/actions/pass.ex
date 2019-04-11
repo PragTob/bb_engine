@@ -12,7 +12,6 @@ defmodule BBEngine.Action.Pass do
     game_state
     |> what_happens()
     |> simulate_action()
-    |> update_game_state()
   end
 
   @minimum_turnover_score 1
@@ -83,30 +82,5 @@ defmodule BBEngine.Action.Pass do
   defp choose_receiver(game_state) do
     # take into account offensive focus as well as offensive skills and defensive pressure
     Random.list_element(game_state, GameState.offense_lineup(game_state))
-  end
-
-  defp update_game_state({game_state, event = %Event.Pass{}}) do
-    {
-      %GameState{
-        game_state
-        | ball_handler_id: event.receiver_id
-      },
-      event
-    }
-  end
-
-  defp update_game_state({game_state, event = %Event.Steal{}}) do
-    {
-      %GameState{
-        game_state
-        | ball_handler_id: event.actor_id,
-          possession: event.team
-      },
-      event
-    }
-  end
-
-  defp update_game_state({game_state, event = %Event.Turnover{}}) do
-    {game_state, event}
   end
 end

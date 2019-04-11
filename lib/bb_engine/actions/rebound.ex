@@ -12,7 +12,6 @@ defmodule BBEngine.Action.Rebound do
   def play(game_state) do
     game_state
     |> simulate_action()
-    |> update_game_state()
   end
 
   @rebound_duration 2
@@ -45,19 +44,4 @@ defmodule BBEngine.Action.Rebound do
   defp rebound_type(rebounder_team, offense_team)
   defp rebound_type(team, team), do: :offensive
   defp rebound_type(_, _), do: :defensive
-
-  defp update_game_state({game_state, event}) do
-    {
-      %GameState{
-        game_state
-        | ball_handler_id: event.actor_id,
-          possession: event.team,
-          shot_clock: shot_clock_seconds(event)
-      },
-      event
-    }
-  end
-
-  defp shot_clock_seconds(%Event.Rebound{type: :offensive}), do: 14
-  defp shot_clock_seconds(_), do: GameState.shot_clock_seconds()
 end

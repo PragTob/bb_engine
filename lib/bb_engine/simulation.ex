@@ -47,18 +47,10 @@ defmodule BBEngine.Simulation do
   end
 
   def simulate_event(game_state) do
-    {new_game_state, event} =
-      game_state
-      |> next_action
-      |> play_action
-
-    %GameState{
-      new_game_state
-      | clock_seconds: new_game_state.clock_seconds - event.duration,
-        shot_clock: new_game_state.shot_clock - shot_clock_duration(event),
-        events: [event | new_game_state.events],
-        box_score: BoxScore.update(new_game_state.box_score, event)
-    }
+    game_state
+    |> next_action
+    |> play_action
+    |> apply_event
   end
 
   defp finished?(game_state) do
@@ -119,6 +111,26 @@ defmodule BBEngine.Simulation do
   @spec play_action({GameState.t(), module}) :: {GameState.t(), Event.t()}
   defp play_action({game_state, action_module}) do
     action_module.play(game_state)
+  end
+
+  defp apply_event({game_state, event}) do
+    game_state
+    |> event_specific_changes(event)
+    |> common_event_changes(event)
+  end
+
+  defp event_specific_changes(game_state, event) do
+    event.__struct__.apply(game_state, event)
+  end
+
+  defp common_event_changes(game_state, event) do
+    %GameState{
+      game_state
+      | clock_seconds: game_state.clock_seconds - event.duration,
+        shot_clock: game_state.shot_clock - shot_clock_duration(event),
+        events: [event | game_state.events],
+        box_score: BoxScore.update(game_state.box_score, event)
+    }
   end
 
   # Rebound resets the shot clock and while it takes time from the full clock

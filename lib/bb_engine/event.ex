@@ -1,5 +1,6 @@
 defmodule BBEngine.Event do
   alias BBEngine.Event
+  alias BBEngine.GameState
 
   @moduledoc """
   Gathers all the event types for easy typing.
@@ -12,6 +13,10 @@ defmodule BBEngine.Event do
   duration - how long did it take?
 
   Other fields are free to be event specific.
+
+  Behaviour wise implementors need to implement `apply/2` which is the specific effect that
+  this event had on the game state (not including clock etc. but what is directly related
+  to this event).
   """
 
   @type t ::
@@ -21,4 +26,6 @@ defmodule BBEngine.Event do
           | Event.Pass.t()
           | Event.Turnover.t()
           | Event.Steal.t()
+
+  @callback apply(GameState.t(), Event.t()) :: GameState.t()
 end

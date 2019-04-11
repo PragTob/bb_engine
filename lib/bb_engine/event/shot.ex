@@ -21,4 +21,12 @@ defmodule BBEngine.Event.Shot do
           success: boolean,
           duration: non_neg_integer
         }
+
+  @behaviour BBEngine.Event
+  @impl true
+  def apply(game_state, _event) do
+    # noop as the real changes happen in statistics/reactions for now
+    # will change when/if we get statistics over
+    game_state
+  end
 end

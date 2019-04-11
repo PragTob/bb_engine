@@ -1,6 +1,7 @@
 defmodule BBEngine.Event.PossessionSwitch do
   alias BBEngine.Player
   alias BBEngine.Possession
+  alias BBEngine.GameState
 
   defstruct [
     :to_team,
@@ -13,4 +14,15 @@ defmodule BBEngine.Event.PossessionSwitch do
           to_player: Player.id(),
           duration: non_neg_integer
         }
+
+  @behaviour BBEngine.Event
+  @impl true
+  def apply(game_state, event) do
+    %GameState{
+      game_state
+      | ball_handler_id: event.to_player,
+        possession: event.to_team,
+        shot_clock: GameState.shot_clock_seconds()
+    }
+  end
 end

@@ -15,4 +15,10 @@ defmodule BBEngine.Event.Pass do
           duration: non_neg_integer,
           team: Possession.t()
         }
+
+  @behaviour BBEngine.Event
+  @impl true
+  def apply(game_state, event) do
+    put_in(game_state.ball_handler_id, event.receiver_id)
+  end
 end
