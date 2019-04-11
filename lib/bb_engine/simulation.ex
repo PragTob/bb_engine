@@ -98,12 +98,13 @@ defmodule BBEngine.Simulation do
     {gs, Action.Forced}
   end
 
+  @pass_shot_distribution 4
   defp determine_action(game_state) do
     # Obviously needs to get more sophisticated
-    {game_state, rand} = Random.uniform(game_state, 4)
+    {game_state, rand} = Random.uniform(game_state, @pass_shot_distribution)
 
     action =
-      if rand < 4 do
+      if rand < @pass_shot_distribution do
         Action.Pass
       else
         Action.TwoPointShot
