@@ -120,7 +120,7 @@ defmodule BBEngine.Simulation do
   end
 
   defp event_specific_changes(game_state, event) do
-    event.__struct__.apply(game_state, event)
+    event.__struct__.update_game_state(game_state, event)
   end
 
   defp common_event_changes(game_state, event) do

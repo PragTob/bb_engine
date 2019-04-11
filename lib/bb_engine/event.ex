@@ -1,6 +1,7 @@
 defmodule BBEngine.Event do
   alias BBEngine.Event
   alias BBEngine.GameState
+  alias BBEngine.BoxScore.Statistics
 
   @moduledoc """
   Gathers all the event types for easy typing.
@@ -14,7 +15,7 @@ defmodule BBEngine.Event do
 
   Other fields are free to be event specific.
 
-  Behaviour wise implementors need to implement `apply/2` which is the specific effect that
+  Behaviour wise implementors need to implement `update_game_state/2` which is the specific effect that
   this event had on the game state (not including clock etc. but what is directly related
   to this event).
   """
@@ -27,5 +28,6 @@ defmodule BBEngine.Event do
           | Event.Turnover.t()
           | Event.Steal.t()
 
-  @callback apply(GameState.t(), Event.t()) :: GameState.t()
+  @callback update_game_state(GameState.t(), Event.t()) :: GameState.t()
+  @callback update_statistics(Statistics.t(), Event.t()) :: Statistics.t()
 end

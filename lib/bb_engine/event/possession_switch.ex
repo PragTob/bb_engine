@@ -17,12 +17,18 @@ defmodule BBEngine.Event.PossessionSwitch do
 
   @behaviour BBEngine.Event
   @impl true
-  def apply(game_state, event) do
+  def update_game_state(game_state, event) do
     %GameState{
       game_state
       | ball_handler_id: event.to_player,
         possession: event.to_team,
         shot_clock: GameState.shot_clock_seconds()
     }
+  end
+
+  @impl true
+  def update_statistics(statistics, _event) do
+    # we don't record anything about passes atm
+    statistics
   end
 end

@@ -1,6 +1,7 @@
 defmodule BBEngine.Event.Pass do
   alias BBEngine.Player
   alias BBEngine.Possession
+  alias BBEngine.GameState
 
   defstruct [
     :actor_id,
@@ -18,7 +19,13 @@ defmodule BBEngine.Event.Pass do
 
   @behaviour BBEngine.Event
   @impl true
-  def apply(game_state, event) do
+  def update_game_state(game_state, event) do
     put_in(game_state.ball_handler_id, event.receiver_id)
+  end
+
+  @impl true
+  def update_statistics(statistics, _event) do
+    # we don't record anything about passes atm
+    statistics
   end
 end
