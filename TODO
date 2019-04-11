@@ -5,7 +5,6 @@ http://www.fiba.basketball/rule-differences
 
 * game time violations
 * use real player skills
-* 3 pointers
 * Dunks/Layups/CloseQuarterShots
 * Blocks
 * Steals
@@ -18,6 +17,8 @@ http://www.fiba.basketball/rule-differences
 * degree of openness to determine if a shot is taken/difficulty of a pass etc.
 * Bonus to score attempts from passes/rebounds
 * points per quarter per team breakdown
+* fatigue (that also regenerates to some extent but never over a maximum during timeouts, breaks etc)
+* a degree of "hotness" for individual players or the whole time, when players come in they're cold, when everything is going well they're getting "hotter". Used to penalize frequent subs or give the opportunity to call a time out to "cool down" the other team
 * dynamic tactic changes (if minute over bla and bla do substitute player)
 
 ## Balance
