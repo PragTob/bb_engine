@@ -6,7 +6,7 @@ defmodule BBEngine.Event.Turnover do
     :actor_id,
     :team,
     :type,
-    duration: 0,
+    duration: 0
   ]
 
   @type t :: %__MODULE__{

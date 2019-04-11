@@ -21,7 +21,7 @@ defmodule BBEngine.Random do
   end
 
   # BEWARE: uniform returns numbers 1..n so no 0
-  @spec uniform(GameState.t, integer) :: {GameState.t, integer}
+  @spec uniform(GameState.t(), integer) :: {GameState.t(), integer}
   def uniform(game_state = %GameState{current_seed: seed}, n) do
     {random, new_seed} = :rand.uniform_s(n, seed)
     new_game_state = %GameState{game_state | current_seed: new_seed}
