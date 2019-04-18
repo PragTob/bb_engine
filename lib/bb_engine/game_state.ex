@@ -35,28 +35,10 @@ defmodule BBEngine.GameState do
           events: [BBEngine.Event.t()] | []
         }
 
-  # dialyzer is not amused when it knows that it'll have concrete values
-  # but you try to give it some generic types
-  @type initial :: %__MODULE__{
-          quarter: 1,
-          clock_seconds: 600,
-          ball_handler_id: nil,
-          possession: nil,
-          box_score: BoxScore.t(),
-          home: Squad.t(),
-          road: Squad.t(),
-          players: %{Player.id() => Player.t()},
-          matchups: %{Player.id() => Player.id()},
-          initial_seed: Random.state(),
-          current_seed: Random.state(),
-          shot_clock: 24,
-          events: []
-        }
-
   @minutes_per_quarter 10
   @seconds_per_quarter 60 * @minutes_per_quarter
 
-  @spec new(Squad.t(), Squad.t(), Random.state()) :: __MODULE__.initial()
+  @spec new(Squad.t(), Squad.t(), Random.state()) :: t
   def new(home_squad, road_squad, initial_seed \\ Random.seed()) do
     {home_squad, road_squad} = set_court(home_squad, road_squad)
     seed = Random.seed(initial_seed)
@@ -75,6 +57,7 @@ defmodule BBEngine.GameState do
     }
   end
 
+  @spec seconds_per_quarter() :: 600
   def seconds_per_quarter, do: @seconds_per_quarter
 
   @spec players(t, Possession.t()) :: [Player.t(), ...]
