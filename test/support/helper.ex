@@ -11,8 +11,10 @@ defmodule BBEngine.TestHelper do
   }
   @ball_handler_id 1
 
+  @spec home_squad() :: BBEngine.Squad.t()
   def home_squad, do: @home_squad
 
+  @spec road_squad() :: BBEngine.Squad.t()
   def road_squad, do: @road_squad
 
   def build_game_state(override) do

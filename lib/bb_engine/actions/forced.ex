@@ -56,7 +56,7 @@ defmodule BBEngine.Action.Forced do
     }
   end
 
-  defp elapsed_time(game_state = %GameState{shot_clock: shot_clock}) do
-    Random.uniform_int(game_state, shot_clock)
+  defp elapsed_time(game_state) do
+    Random.uniform_int(game_state, min(game_state.clock_seconds, game_state.shot_clock))
   end
 end
