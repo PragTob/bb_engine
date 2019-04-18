@@ -31,12 +31,12 @@ defmodule BBEngine.Action.Forced do
     # skills but also dependent on experience - might even become a boon for
     # very special players sometimes
     # We could also pass here.. dunnoo... also on the time.
+    {game_state, duration} = elapsed_time(game_state)
+
     {game_state, shot_event} =
-      TwoPointShot.attempt(game_state, ball_handler, defender, @forced_shot_malus)
+      TwoPointShot.attempt(game_state, ball_handler, defender, duration, @forced_shot_malus)
 
-    {game_state, elapsed_time} = elapsed_time(game_state)
-
-    {game_state, %Event.Shot{shot_event | duration: elapsed_time}}
+    {game_state, shot_event}
   end
 
   defp turnover(game_state, ball_handler) do

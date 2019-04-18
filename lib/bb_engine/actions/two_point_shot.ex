@@ -11,16 +11,14 @@ defmodule BBEngine.Action.TwoPointShot do
   def play(game_state) do
     {ball_handler, defender} = GameState.on_ball_matchup(game_state)
 
-    {game_state, shot_event} = attempt(game_state, ball_handler, defender)
-    {game_state, elapsed_time} = elapsed_time(game_state)
+    {game_state, duration} = elapsed_time(game_state)
+    {game_state, shot_event} = attempt(game_state, ball_handler, defender, duration)
 
-    event = %Event.Shot{shot_event | duration: elapsed_time}
-
-    {game_state, event}
+    {game_state, shot_event}
   end
 
   @spec attempt(GameState.t(), Player.t(), Player.t(), number) :: {GameState.t(), Event.Shot.t()}
-  def attempt(game_state, ball_handler, opponent, offensive_adjustment \\ 0) do
+  def attempt(game_state, ball_handler, opponent, duration, offensive_adjustment \\ 0) do
     {game_state, success} =
       Random.successful?(
         game_state,
@@ -35,8 +33,7 @@ defmodule BBEngine.Action.TwoPointShot do
       success: success,
       type: :midrange,
       points: 2,
-      # honestly hack so don't have to define another type
-      duration: 0
+      duration: duration
     }
 
     {game_state, event}
