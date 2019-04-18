@@ -61,6 +61,14 @@ defmodule BBEngine.GameViewer do
     "And #{event.actor_id} took too long and we have a clock violation!"
   end
 
+  defp event_log(event = %Event.Turnover{type: :out_of_bound_pass}) do
+    "And #{event.actor_id} throws the ball out of bounds!"
+  end
+
+  defp event_log(event = %Event.Steal{}) do
+    "And #{event.actor_id} steals the ball from #{event.stolen_from}!"
+  end
+
   defp game_clock(game_state) do
     "#{game_state.quarter} quarter #{format_clock(game_state.clock_seconds)}"
   end
