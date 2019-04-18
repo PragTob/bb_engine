@@ -33,7 +33,7 @@ defmodule BBEngine.GameViewer do
   end
 
   defp log_it(game_state, event) do
-    "#{game_clock(game_state)} #{event_log(event)} #{score(game_state)}"
+    "#{game_clock(game_state)} - #{event_log(event)} #{score(game_state)}"
   end
 
   @spec event_log(Event.t()) :: String.t()
@@ -75,8 +75,12 @@ defmodule BBEngine.GameViewer do
 
   @seconds_per_minute 60
   defp format_clock(seconds) do
-    "#{div(seconds, @seconds_per_minute)}:#{rem(seconds, @seconds_per_minute)}"
+    seconds = rem(seconds, @seconds_per_minute)
+    "#{div(seconds, @seconds_per_minute)}:#{seconds_padding(seconds)}#{seconds}"
   end
+
+  defp seconds_padding(seconds) when seconds <= 9, do: "0"
+  defp seconds_padding(_), do: ""
 
   defp score(game_state) do
     "(#{game_state.box_score.home.team.points}-#{game_state.box_score.road.team.points})"

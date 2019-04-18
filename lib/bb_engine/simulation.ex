@@ -50,6 +50,7 @@ defmodule BBEngine.Simulation do
     game_state
     |> next_action
     |> play_action
+    |> catch_time_violations
     |> apply_event
   end
 
@@ -103,6 +104,29 @@ defmodule BBEngine.Simulation do
   @spec play_action({GameState.t(), module}) :: {GameState.t(), Event.t()}
   defp play_action({game_state, action_module}) do
     action_module.play(game_state)
+  end
+
+  defp catch_time_violations({game_state, event}) do
+    max_time = max(game_state.clock_seconds, game_state.shot_clock)
+
+    event =
+      if event.duration > max_time do
+        # We need to somehow take care that this doesn't happen with
+        # steals/blocks because then it should be a TO _before_ the
+        # steal/block happens
+        # also the event could get some information on context, like
+        # someone didn't get the shot off in time or whatever
+        %Event.Turnover{
+          actor_id: game_state.ball_handler_id,
+          team: game_state.possession,
+          type: :clock_violation,
+          duration: max_time
+        }
+      else
+        event
+      end
+
+    {game_state, event}
   end
 
   defp apply_event({game_state, event}) do

@@ -18,7 +18,10 @@ road_squad = %Squad{
 
 box_score =
   1..1_000
-  |> Enum.map(fn _ -> Simulation.simulate(home_squad, road_squad).box_score end)
+  |> Enum.map(fn i ->
+    if rem(i, 100) == 0, do: IO.puts("Simulation #{i}")
+    Simulation.simulate(home_squad, road_squad).box_score
+  end)
   |> BoxScoreAggregator.aggregate()
 
 IO.puts("------------------HOME---------------------")
