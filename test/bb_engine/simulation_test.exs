@@ -1,17 +1,10 @@
 defmodule BBEngine.SimulationTest do
   use ExUnit.Case
-  alias BBEngine.{GameState, Player, Squad, Random, BoxScore}
+  alias BBEngine.{GameState, Random, BoxScore, TestHelper}
   import BBEngine.Simulation
 
-  @home_squad %Squad{
-    players: Enum.map(1..12, &Player.standard_player/1),
-    lineup: [1, 2, 3, 4, 5]
-  }
-  @road_squad %Squad{
-    players: Enum.map(13..24, &Player.standard_player/1),
-    lineup: [13, 14, 15, 16, 17]
-  }
-  @ball_handler_id 1
+  @home_squad TestHelper.home_squad()
+  @road_squad TestHelper.road_squad()
 
   describe ".simulate" do
     test "simulates a whole game and reaches at least reasonable stats" do
@@ -51,7 +44,7 @@ defmodule BBEngine.SimulationTest do
     test "can safely move on to and simulate overtime" do
       game_state =
         %{clock_seconds: 0, quarter: 4}
-        |> build_game_state()
+        |> TestHelper.build_game_state()
         |> proceed_simulation()
 
       # right now one event is simulated
@@ -71,7 +64,7 @@ defmodule BBEngine.SimulationTest do
     test "quarters move on" do
       game_state =
         %{clock_seconds: 0, quarter: 2}
-        |> build_game_state
+        |> TestHelper.build_game_state()
         |> simulate_event
 
       # right now one event is simulated
@@ -82,7 +75,7 @@ defmodule BBEngine.SimulationTest do
     test "we can go to over time" do
       game_state =
         %{clock_seconds: 0, quarter: 4}
-        |> build_game_state
+        |> TestHelper.build_game_state()
         |> simulate_event
 
       # right now one event is simulated
@@ -94,7 +87,7 @@ defmodule BBEngine.SimulationTest do
     test "game ends if scores are different" do
       assert {:done, game_state} =
                %{clock_seconds: 0, quarter: 4}
-               |> build_game_state
+               |> TestHelper.build_game_state()
                |> add_home_points
                |> simulate_event
 
@@ -103,16 +96,7 @@ defmodule BBEngine.SimulationTest do
     end
   end
 
-  defp build_game_state(override) do
-    game_state =
-      @home_squad
-      |> GameState.new(@road_squad, Random.seed())
-      |> Map.put(:ball_handler_id, @ball_handler_id)
-      |> Map.put(:possession, :home)
-
-    Map.merge(game_state, override)
-  end
-
+  @ball_handler_id 1
   defp add_home_points(game_state) do
     event = %BBEngine.Event.Shot{
       actor_id: @ball_handler_id,

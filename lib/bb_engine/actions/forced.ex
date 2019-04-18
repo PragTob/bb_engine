@@ -12,11 +12,12 @@ defmodule BBEngine.Action.Forced do
     {ball_handler, defender} = GameState.on_ball_matchup(game_state)
 
     {game_state, turnover?} = turnover?(game_state, ball_handler, defender)
+    {game_state, duration} = elapsed_time(game_state)
 
     if turnover? do
-      turnover(game_state, ball_handler)
+      turnover(game_state, ball_handler, duration)
     else
-      shot_attempt(game_state, ball_handler, defender)
+      shot_attempt(game_state, ball_handler, defender, duration)
     end
   end
 
@@ -26,23 +27,32 @@ defmodule BBEngine.Action.Forced do
   end
 
   @forced_shot_malus -15
-  defp shot_attempt(game_state, ball_handler, defender) do
+  defp shot_attempt(game_state, ball_handler, defender, duration) do
     # TODO: make the malus dependent on the player... like a percent of their
     # skills but also dependent on experience - might even become a boon for
     # very special players sometimes
     # We could also pass here.. dunnoo... also on the time.
-    {game_state, duration} = elapsed_time(game_state)
-
     {game_state, shot_event} =
-      TwoPointShot.attempt(game_state, ball_handler, defender, duration, @forced_shot_malus)
+      TwoPointShot.attempt(
+        game_state,
+        ball_handler,
+        defender,
+        duration,
+        @forced_shot_malus
+      )
 
     {game_state, shot_event}
   end
 
-  defp turnover(game_state, ball_handler) do
+  defp turnover(game_state, ball_handler, duration) do
     {
       game_state,
-      %Event.Turnover{actor_id: ball_handler.id, team: ball_handler.team, type: :clock_violation}
+      %Event.Turnover{
+        actor_id: ball_handler.id,
+        team: ball_handler.team,
+        type: :clock_violation,
+        duration: duration
+      }
     }
   end
 

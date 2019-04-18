@@ -6,6 +6,7 @@ defmodule BbEngine.Mixfile do
       app: :bb_engine,
       version: "0.1.0",
       elixir: "~> 1.5",
+      elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       dialyzer: [flags: [:unmatched_returns, :error_handling, :race_conditions, :underspecs]]
@@ -14,10 +15,11 @@ defmodule BbEngine.Mixfile do
 
   # Run "mix help compile.app" to learn about applications.
   def application do
-    [
-      extra_applications: [:logger]
-    ]
+    []
   end
+
+  defp elixirc_paths(:test), do: ["lib", "test/support", "mix"]
+  defp elixirc_paths(_), do: ["lib"]
 
   # Run "mix help deps" to learn about dependencies.
   defp deps do
