@@ -90,22 +90,14 @@ defmodule BBEngine.Simulation do
     {gs, Action.Forced}
   end
 
-  @pass_shot_distribution_total 100
-  @pass_distribution 1..75
-  @two_point_distribution 76..92
-  @three_point_distribution 93..@pass_shot_distribution_total
+  @action_probability_map %{
+    Action.Pass => 75,
+    Action.TwoPointShot => 17,
+    Action.ThreePointShot => 8
+  }
   defp determine_action(game_state) do
-    # Obviously needs to get more sophisticated
-    {game_state, rand} = Random.uniform_int(game_state, @pass_shot_distribution_total)
-
-    action =
-      case rand do
-        rand when rand in @pass_distribution -> Action.Pass
-        rand when rand in @two_point_distribution -> Action.TwoPointShot
-        rand when rand in @three_point_distribution -> Action.ThreePointShot
-      end
-
-    {game_state, action}
+    # Obviously needs to get more sophisticated/adaptive to team tactics
+    Random.weighted(game_state, @action_probability_map)
   end
 
   @spec play_action({GameState.t(), module}) :: {GameState.t(), Event.t()}

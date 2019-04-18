@@ -54,9 +54,9 @@ defmodule BBEngine.Random do
   @type probability :: number
   @type weighted_map :: %{option => probability}
   @spec weighted(GameState.t(), weighted_map) :: {GameState.t(), any}
-  def weighted(game_state, probability_points) do
+  def weighted(game_state, probability_map) do
     {list, max_value} =
-      Enum.reduce(probability_points, {[], 0}, fn {entity, value}, {list, limit} ->
+      Enum.reduce(probability_map, {[], 0}, fn {entity, value}, {list, limit} ->
         to_value = value + limit
         {[{to_value, entity} | list], to_value}
       end)
