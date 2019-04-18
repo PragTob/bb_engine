@@ -6,9 +6,10 @@ defmodule BBEngine.Action.ForcedTest do
   test "doesn't take more time than possible at the end of the game" do
     game_state = TestHelper.build_game_state(%{clock_seconds: 1})
 
-    for i <- 1..10 do
-      {game_state, event} = play(game_state)
+    Enum.reduce(1..10, game_state, fn _, gs ->
+      {gs, event} = play(gs)
       assert event.duration <= 1
-    end
+      gs
+    end)
   end
 end
