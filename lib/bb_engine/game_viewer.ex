@@ -46,11 +46,11 @@ defmodule BBEngine.GameViewer do
   end
 
   defp event_log(event = %Event.Shot{success: true}) do
-    "#{event.actor_id} makes the shot against #{event.defender_id}"
+    "#{event.actor_id} makes the #{event.type} shot against #{event.defender_id}"
   end
 
   defp event_log(event = %Event.Shot{success: false}) do
-    "#{event.actor_id} fails to make the shot against #{event.defender_id}"
+    "#{event.actor_id} fails to make the #{event.type} shot against #{event.defender_id}"
   end
 
   defp event_log(event = %Event.PossessionSwitch{}) do
