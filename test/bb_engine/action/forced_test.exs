@@ -1,4 +1,4 @@
-defmodule BBEngine.Actions.ForcedTest do
+defmodule BBEngine.Action.ForcedTest do
   use ExUnit.Case, async: true
   alias BBEngine.TestHelper
   import BBEngine.Action.Forced
