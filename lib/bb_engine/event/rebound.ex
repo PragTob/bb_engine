@@ -21,6 +21,7 @@ defmodule BBEngine.Event.Rebound do
 
   @behaviour BBEngine.Event
   @impl true
+  @spec update_game_state(GameState.t(), t) :: GameState.t()
   def update_game_state(game_state, event) do
     %GameState{
       game_state

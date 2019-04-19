@@ -1,4 +1,5 @@
 defmodule BBEngine.Event.Turnover do
+  alias BBEngine.GameState
   alias BBEngine.Player
   alias BBEngine.Possession
   alias BBEngine.BoxScore
@@ -27,6 +28,7 @@ defmodule BBEngine.Event.Turnover do
 
   @behaviour BBEngine.Event
   @impl true
+  @spec update_game_state(GameState.t(), t) :: GameState.t()
   def update_game_state(game_state, event) do
     update_in(game_state.box_score, fn box_score ->
       BoxScore.update(box_score, event.team, event.actor_id, fn stats ->
