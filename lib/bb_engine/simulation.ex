@@ -130,29 +130,6 @@ defmodule BBEngine.Simulation do
   end
 
   defp apply_event({game_state, event}) do
-    game_state
-    |> event_specific_changes(event)
-    |> common_event_changes(event)
+    Event.apply(game_state, event)
   end
-
-  defp event_specific_changes(game_state, event) do
-    event.__struct__.update_game_state(game_state, event)
-  end
-
-  defp common_event_changes(game_state, event) do
-    %GameState{
-      game_state
-      | clock_seconds: game_state.clock_seconds - event.duration,
-        shot_clock: game_state.shot_clock - shot_clock_duration(event),
-        events: [event | game_state.events],
-        box_score: BoxScore.update(game_state.box_score, event)
-    }
-  end
-
-  # Rebound resets the shot clock and while it takes time from the full clock
-  # that duration should not be subtracted from the shot clock as the shot clock
-  # gets reset once someone has control of the ball (rebound complete)
-  @spec shot_clock_duration(Event.t()) :: non_neg_integer
-  defp shot_clock_duration(%Event.Rebound{}), do: 0
-  defp shot_clock_duration(%{duration: duration}), do: duration
 end

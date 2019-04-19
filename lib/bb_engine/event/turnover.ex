@@ -1,7 +1,7 @@
 defmodule BBEngine.Event.Turnover do
   alias BBEngine.Player
   alias BBEngine.Possession
-  alias BBEngine.BoxScore.Statistics
+  alias BBEngine.BoxScore
 
   @moduledoc """
   These are turnovers committed by individuals by themselves.
@@ -27,17 +27,11 @@ defmodule BBEngine.Event.Turnover do
 
   @behaviour BBEngine.Event
   @impl true
-  def update_game_state(game_state, _event) do
-    # noop as the real changes happen in the reaction action possession switch
-    # will change when/if we get statistics over
-    game_state
-  end
-
-  @impl true
-  def update_statistics(statistics, _event) do
-    %Statistics{
-      statistics
-      | turnovers: statistics.turnovers + 1
-    }
+  def update_game_state(game_state, event) do
+    update_in(game_state.box_score, fn box_score ->
+      BoxScore.update(box_score, event.team, event.actor_id, fn stats ->
+        update_in(stats.turnovers, &(&1 + 1))
+      end)
+    end)
   end
 end

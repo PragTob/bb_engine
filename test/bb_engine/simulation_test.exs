@@ -106,10 +106,7 @@ defmodule BBEngine.SimulationTest do
       points: 2
     }
 
-    %GameState{
-      game_state
-      | box_score: BoxScore.update(game_state.box_score, event)
-    }
+    BBEngine.Event.Shot.update_game_state(game_state, event)
   end
 
   defp assert_stats_add_up(box_score_stats) do

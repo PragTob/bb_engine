@@ -1,6 +1,6 @@
 defmodule BBEngine.BoxScore do
   alias BBEngine.BoxScore.Statistics
-  alias BBEngine.Event
+  alias BBEngine.Possession
   alias BBEngine.Player
   alias BBEngine.Squad
 
@@ -30,16 +30,13 @@ defmodule BBEngine.BoxScore do
     }
   end
 
-  @spec update(t, Event.t()) :: t
-  def update(box_score, event = %{team: team, actor_id: actor_id}) do
+  @type update_function :: (Statistics.t() -> Statistics.t())
+  @spec update(t, Possession.t(), Player.id(), update_function) :: t
+  def update(box_score, team, player_id, statistics_update_function) do
     box_score
-    |> update_in([team, actor_id], fn stats -> Statistics.apply(stats, event) end)
-    |> update_in([team, :team], fn stats -> Statistics.apply(stats, event) end)
+    |> update_in([team, player_id], statistics_update_function)
+    |> update_in([team, :team], statistics_update_function)
   end
-
-  # We currently ignore the possession switch... we could count them but does
-  # that interest anyone?
-  def update(box_score, _event_without_actors), do: box_score
 
   defp statistics(squad) do
     player_stats = Enum.map(squad.players, fn player -> {player.id, %Statistics{}} end)

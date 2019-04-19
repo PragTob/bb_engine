@@ -7,7 +7,8 @@ defmodule BBEngine.Action.Pass do
   @behaviour BBEngine.Action
 
   @impl true
-  @spec play(GameState.t()) :: {GameState.t(), Event.Pass.t() | Event.Steal.t()}
+  @spec play(GameState.t()) ::
+          {GameState.t(), Event.Pass.t() | Event.Steal.t() | Event.Turnover.t()}
   def play(game_state) do
     game_state
     |> what_happens()

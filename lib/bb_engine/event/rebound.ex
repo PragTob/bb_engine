@@ -2,6 +2,7 @@ defmodule BBEngine.Event.Rebound do
   alias BBEngine.Player
   alias BBEngine.Possession
   alias BBEngine.GameState
+  alias BBEngine.BoxScore
   alias BBEngine.BoxScore.Statistics
 
   defstruct [
@@ -25,15 +26,18 @@ defmodule BBEngine.Event.Rebound do
       game_state
       | ball_handler_id: event.actor_id,
         possession: event.team,
-        shot_clock: shot_clock_seconds(event)
+        shot_clock: shot_clock_seconds(event),
+        box_score:
+          BoxScore.update(game_state.box_score, event.team, event.actor_id, fn stats ->
+            update_statistics(stats, event)
+          end)
     }
   end
 
   defp shot_clock_seconds(%__MODULE__{type: :offensive}), do: 14
   defp shot_clock_seconds(_), do: GameState.shot_clock_seconds()
 
-  @impl true
-  def update_statistics(statistics, %__MODULE__{type: :defensive}) do
+  defp update_statistics(statistics, %__MODULE__{type: :defensive}) do
     %Statistics{
       statistics
       | defensive_rebounds: statistics.defensive_rebounds + 1,
@@ -41,7 +45,7 @@ defmodule BBEngine.Event.Rebound do
     }
   end
 
-  def update_statistics(statistics, %__MODULE__{type: :offensive}) do
+  defp update_statistics(statistics, %__MODULE__{type: :offensive}) do
     %Statistics{
       statistics
       | offensive_rebounds: statistics.offensive_rebounds + 1,

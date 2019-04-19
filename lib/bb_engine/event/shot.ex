@@ -1,6 +1,7 @@
 defmodule BBEngine.Event.Shot do
   alias BBEngine.Player
   alias BBEngine.Possession
+  alias BBEngine.BoxScore
   alias BBEngine.BoxScore.Statistics
 
   defstruct [
@@ -25,14 +26,15 @@ defmodule BBEngine.Event.Shot do
 
   @behaviour BBEngine.Event
   @impl true
-  def update_game_state(game_state, _event) do
-    # noop as the real changes happen in statistics/reactions for now
-    # will change when/if we get statistics over
-    game_state
+  def update_game_state(game_state, event) do
+    update_in(game_state.box_score, fn box_score ->
+      BoxScore.update(box_score, event.team, event.actor_id, fn stats ->
+        update_statistics(stats, event)
+      end)
+    end)
   end
 
-  @impl true
-  def update_statistics(statistics, shot = %__MODULE__{success: true, points: 2}) do
+  defp update_statistics(statistics, shot = %__MODULE__{success: true, points: 2}) do
     %Statistics{
       statistics
       | points: statistics.points + shot.points,
@@ -43,7 +45,7 @@ defmodule BBEngine.Event.Shot do
     }
   end
 
-  def update_statistics(statistics, shot = %__MODULE__{success: true, points: 3}) do
+  defp update_statistics(statistics, shot = %__MODULE__{success: true, points: 3}) do
     %Statistics{
       statistics
       | points: statistics.points + shot.points,
@@ -54,7 +56,7 @@ defmodule BBEngine.Event.Shot do
     }
   end
 
-  def update_statistics(statistics, %__MODULE__{success: false, points: 2}) do
+  defp update_statistics(statistics, %__MODULE__{success: false, points: 2}) do
     %Statistics{
       statistics
       | field_goals_attempted: statistics.field_goals_attempted + 1,
@@ -62,7 +64,7 @@ defmodule BBEngine.Event.Shot do
     }
   end
 
-  def update_statistics(statistics, %__MODULE__{success: false, points: 3}) do
+  defp update_statistics(statistics, %__MODULE__{success: false, points: 3}) do
     %Statistics{
       statistics
       | field_goals_attempted: statistics.field_goals_attempted + 1,

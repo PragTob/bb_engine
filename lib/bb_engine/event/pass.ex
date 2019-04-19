@@ -21,10 +21,4 @@ defmodule BBEngine.Event.Pass do
   def update_game_state(game_state, event) do
     put_in(game_state.ball_handler_id, event.receiver_id)
   end
-
-  @impl true
-  def update_statistics(statistics, _event) do
-    # we don't record anything about passes atm
-    statistics
-  end
 end

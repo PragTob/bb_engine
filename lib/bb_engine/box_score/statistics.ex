@@ -1,6 +1,4 @@
 defmodule BBEngine.BoxScore.Statistics do
-  alias BBEngine.Event
-
   defstruct points: 0,
             field_goals_made: 0,
             field_goals_attempted: 0,
@@ -29,12 +27,13 @@ defmodule BBEngine.BoxScore.Statistics do
           turnovers: non_neg_integer
         }
 
+  @doc """
+  Return all the different statistics we track.
+  """
+  @spec stats() :: [atom]
   def stats do
     %__MODULE__{}
     |> Map.from_struct()
     |> Map.keys()
   end
-
-  @spec apply(t, Event.t()) :: t
-  def apply(statistics, event), do: event.__struct__.update_statistics(statistics, event)
 end

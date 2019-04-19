@@ -2,14 +2,10 @@ defmodule BBEngine.Event.Steal do
   alias BBEngine.Player
   alias BBEngine.Possession
   alias BBEngine.GameState
-  alias BBEngine.BoxScore.Statistics
+  alias BBEngine.BoxScore
 
   @moduledoc """
-  These are turnovers committed by individuals by themselves.
-
-  For instance this doesn't count steals as that's a separate event and needs more fields.
-  These turnovers are intended to be shot clock violations, stepping out of bounds,
-  traveling etc.
+  When someone steals the ball you gotta have it.
   """
 
   defstruct [
@@ -32,19 +28,20 @@ defmodule BBEngine.Event.Steal do
     %GameState{
       game_state
       | ball_handler_id: event.actor_id,
-        possession: event.team
+        possession: event.team,
+        box_score: update_box_score(game_state.box_score, event)
     }
   end
 
-  @impl true
-  def update_statistics(statistics, _event) do
-    # TODO: steals (just like blocks) affect the statistics of both attacker and defeder
-    # We need to figure out how to incorporate this, either we dispatch on the box score level
-    # and let events handle it or we return multiple events (Steal and turnover as well as bloked
-    # shot and missed shot but that'd be kinda weird wouldn't it?)
-    %Statistics{
-      statistics
-      | steals: statistics.steals + 1
-    }
+  defp update_box_score(box_score, event) do
+    opponent = Possession.opposite(event.team)
+
+    box_score
+    |> BoxScore.update(event.team, event.actor_id, fn statistics ->
+      update_in(statistics.steals, &(&1 + 1))
+    end)
+    |> BoxScore.update(opponent, event.stolen_from, fn statistics ->
+      update_in(statistics.turnovers, &(&1 + 1))
+    end)
   end
 end
