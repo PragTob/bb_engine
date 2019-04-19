@@ -15,7 +15,7 @@ defmodule BBEngine.Action.Pass do
     |> simulate_action()
   end
 
-  @minimum_turnover_score 1
+  @minimum_turnover_score 0.5
   @minimum_steal_score 0.1
   @force_turnover_skill_modifier 0.1
   defp what_happens(game_state) do
@@ -23,13 +23,12 @@ defmodule BBEngine.Action.Pass do
 
     # obviously these should take into account dribbling, experience, passing etc...
     # it also very obviously needs some work...
-    force_turn_over_score =
-      @force_turnover_skill_modifier * (defender.defensive_rating - ball_handler.offensive_rating)
+    force_turn_over_score = @force_turnover_skill_modifier * defender.defensive_rating
 
     probabilities = %{
       pass: ball_handler.offensive_rating,
-      turnover: max(force_turn_over_score, @minimum_turnover_score),
-      steal: max(force_turn_over_score, @minimum_steal_score)
+      turnover: max(0.4 * force_turn_over_score, @minimum_turnover_score),
+      steal: max(0.2 * force_turn_over_score, @minimum_steal_score)
     }
 
     Random.weighted(game_state, probabilities)
