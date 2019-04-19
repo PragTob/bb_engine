@@ -3,11 +3,13 @@ defmodule BBEngine.TestHelper do
 
   @home_squad %Squad{
     players: Enum.map(1..12, &Player.standard_player/1),
-    lineup: [1, 2, 3, 4, 5]
+    lineup: [1, 2, 3, 4, 5],
+    bench: Enum.to_list(6..12)
   }
   @road_squad %Squad{
     players: Enum.map(13..24, &Player.standard_player/1),
-    lineup: [13, 14, 15, 16, 17]
+    lineup: [13, 14, 15, 16, 17],
+    bench: Enum.to_list(18..24)
   }
   @ball_handler_id 1
 

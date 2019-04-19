@@ -49,7 +49,8 @@ defmodule BBEngine.Player do
       offensive_rating: 50,
       defensive_rating: 50,
       offensive_rebound: 30,
-      defensive_rebound: 70
+      defensive_rebound: 70,
+      team: :home
     }
   end
 end
