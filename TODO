@@ -3,23 +3,33 @@ http://www.fiba.basketball/basketball-rules
 http://www.fiba.basketball/rule-differences
 
 
-* use real player skills
-* Dunks/Layups/CloseQuarterShots
+### Basic Actions/Events
 * Blocks
-* Steals
-* Loose Balls
-* Alley-Oop
 * Fouls
-* Inbound
-* Foul Out
 * Free Throws
+* Foul Out
+* Loose Balls
+* Inbound
+
+### Basic Game Engine Features
+* use real player skills (find a data source etc)
+* adjust values to make sense (does it make sense to build _autotune_ ?)
+
+### Advanced Events
+* Dunks/Layups/CloseQuarterShots
+* Alley-Oop
+* 3 second violations
+* Goaltending
+* Jump Balls (turning over possession according to FIBA rules)
+
+### Advanced Game Engine Features
 * offensive focus
 * degree of openness to determine if a shot is taken/difficulty of a pass etc.
 * Bonus to score attempts from passes/rebounds
-* points per quarter per team breakdown
 * fatigue (that also regenerates to some extent but never over a maximum during timeouts, breaks etc)
 * a degree of "hotness" for individual players or the whole time, when players come in they're cold, when everything is going well they're getting "hotter". Used to penalize frequent subs or give the opportunity to call a time out to "cool down" the other team
 * dynamic tactic changes (if minute over bla and bla do substitute player)
+* points per quarter per team breakdown (possibly all stats)
 
 ## Balance
 http://www.euroleague.net/competition/teams/showteam?clubcode=BAM#!stats
@@ -27,11 +37,6 @@ http://www.euroleague.net/main/statistics?mode=Leaders&entity=Clubs&seasonmode=S
 
 * we're making too many points
 * Too many "Forced Shot" events are happening
-
-### Nice To have
-* Jump Balls (turning over possession according to FIBA rules)
-* 3 second violations
-* Goaltending
 
 ## Internal
 * switch random module to not always take the game_state but maybe just the seed
