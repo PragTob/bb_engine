@@ -5,7 +5,7 @@ http://www.fiba.basketball/rule-differences
 
 ### Basic Actions/Events
 * Blocks
-* Fouls
+* Fouls (during shot, reach in, offensive, defensive)
 * Free Throws
 * Foul Out
 * Loose Balls
@@ -18,11 +18,14 @@ http://www.fiba.basketball/rule-differences
 ### Advanced Events
 * Dunks/Layups/CloseQuarterShots
 * Alley-Oop
-* 3 second violations
+* More Turnovers (3 second violations, out of bounds, traveling, backcort...)
 * Goaltending
 * Jump Balls (turning over possession according to FIBA rules)
+* Technical Fouls, DQ, Sportsmanslike fouls thingies
 
 ### Advanced Game Engine Features
+* Substitutions
+* Timeouts
 * offensive focus
 * degree of openness to determine if a shot is taken/difficulty of a pass etc.
 * Bonus to score attempts from passes/rebounds
