@@ -3,12 +3,12 @@ http://www.fiba.basketball/basketball-rules
 http://www.fiba.basketball/rule-differences
 
 
-* game time violations
 * use real player skills
 * Dunks/Layups/CloseQuarterShots
 * Blocks
 * Steals
 * Loose Balls
+* Alley-Oop
 * Fouls
 * Inbound
 * Foul Out
@@ -29,11 +29,27 @@ http://www.euroleague.net/main/statistics?mode=Leaders&entity=Clubs&seasonmode=S
 * Too many "Forced Shot" events are happening
 
 ### Nice To have
-* "simple" match viewer that also shows time to spot logical inconsistencies and general dev
 * Jump Balls (turning over possession according to FIBA rules)
 * 3 second violations
 * Goaltending
 
 ## Internal
-* Action Behaviour
 * switch random module to not always take the game_state but maybe just the seed
+  * this'd result in having to reset the seed manually a lot of times again
+
+## Design
+
+### Situations
+Introduce the concept of "situations" that can then play out with different actions and produce different events.
+
+Ideas for situations:
+
+* Three Point Line - possible actions: pass, drive, shoot, hold ball, initiate pick and roll?
+* Midrange
+* Close
+* Fast Break
+* Pick Game (Pick & Roll, Pick & Pop etc)
+
+Situations would also have a degree of openness etc.
+
+Q: How to represent great passes/cuts that result in an immediate basket
