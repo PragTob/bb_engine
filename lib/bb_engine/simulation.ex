@@ -107,7 +107,7 @@ defmodule BBEngine.Simulation do
   end
 
   defp catch_time_violations({game_state, event}) do
-    max_time = max(game_state.clock_seconds, game_state.shot_clock)
+    max_time = GameState.remaining_time(game_state)
 
     event =
       if event.duration > max_time do

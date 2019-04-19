@@ -12,20 +12,29 @@ defmodule BBEngine.SimulationTest do
       %GameState{box_score: box_score} = game_state
       %BoxScore{home: %{team: home}, road: %{team: road}} = box_score
 
+      assert game_state.clock_seconds == 0
+      assert game_state.quarter >= 4
+
+      assert game_state.shot_clock >= 0
+      assert game_state.shot_clock <= 24
+
       total_points = home.points + road.points
       assert total_points >= 100
-      assert total_points <= 250
+      assert total_points <= 275
       assert home.points != road.points
 
       assert total_rebounds = home.rebounds + road.rebounds
       assert total_rebounds >= 60
 
-      # should get fixed :D
-      assert game_state.clock_seconds <= 0
-      assert game_state.quarter >= 4
+      assert total_offensive_rebounds = home.offensive_rebounds + road.offensive_rebounds
+      assert total_offensive_rebounds >= 10
 
-      assert game_state.shot_clock >= 0
-      assert game_state.shot_clock <= 24
+      assert total_turnovers = home.turnovers + road.turnovers
+      assert total_turnovers >= 15
+
+      assert total_steals = home.steals + road.steals
+      # we're doing kinda too few atm
+      assert total_steals >= 1
 
       assert_stats_add_up(box_score.home)
       assert_stats_add_up(box_score.road)
@@ -53,7 +62,7 @@ defmodule BBEngine.SimulationTest do
       box_score = game_state.box_score
 
       total_points = box_score.home.team.points + box_score.road.team.points
-      assert total_points >= 8
+      assert total_points >= 6
 
       assert_stats_add_up(box_score.home)
       assert_stats_add_up(box_score.road)

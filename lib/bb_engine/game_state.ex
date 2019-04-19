@@ -105,6 +105,11 @@ defmodule BBEngine.GameState do
 
   def shot_clock_seconds, do: @shot_clock_seconds
 
+  @spec remaining_time(t) :: non_neg_integer
+  def remaining_time(game_state) do
+    min(game_state.clock_seconds, game_state.shot_clock)
+  end
+
   defp set_court(home_squad = %{players: home}, road_squad = %{players: road}) do
     home_squad = %Squad{home_squad | players: your_court(home, :home)}
     road_squad = %Squad{road_squad | players: your_court(road, :road)}
