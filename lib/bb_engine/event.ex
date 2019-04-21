@@ -26,6 +26,7 @@ defmodule BBEngine.Event do
           | Event.Pass.t()
           | Event.Turnover.t()
           | Event.Steal.t()
+          | Event.Block.t()
 
   @callback update_game_state(GameState.t(), Event.t()) :: GameState.t()
 

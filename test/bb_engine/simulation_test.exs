@@ -1,6 +1,6 @@
 defmodule BBEngine.SimulationTest do
   use ExUnit.Case
-  alias BBEngine.{GameState, Random, BoxScore, TestHelper}
+  alias BBEngine.{Event, GameState, Random, BoxScore, TestHelper}
   import BBEngine.Simulation
 
   @home_squad TestHelper.home_squad()
@@ -102,6 +102,17 @@ defmodule BBEngine.SimulationTest do
 
       assert game_state.clock_seconds == 0
       assert game_state.quarter == 4
+    end
+
+    test "if the shot clock is exhaused we create a turnover" do
+      game_state =
+        %{clock_seconds: 40, quarter: 2, shot_clock: 0}
+        |> TestHelper.build_game_state()
+        |> simulate_event
+
+      [last_event | _] = game_state.events
+
+      assert %Event.Turnover{type: :clock_violation} = last_event
     end
   end
 

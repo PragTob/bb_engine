@@ -22,8 +22,7 @@ defmodule BBEngine.Event.PossessionSwitch do
     %GameState{
       game_state
       | ball_handler_id: event.to_player,
-        possession: event.to_team,
-        shot_clock: GameState.shot_clock_seconds()
+        possession: event.to_team
     }
   end
 end

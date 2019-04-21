@@ -46,6 +46,17 @@ defmodule BBEngine.Simulation do
     end
   end
 
+  def simulate_event(game_state = %GameState{shot_clock: 0}) do
+    shot_clock_violation = %Event.Turnover{
+      actor_id: game_state.ball_handler_id,
+      team: game_state.possession,
+      type: :clock_violation,
+      duration: 0
+    }
+
+    apply_event({game_state, shot_clock_violation})
+  end
+
   def simulate_event(game_state) do
     game_state
     |> next_action

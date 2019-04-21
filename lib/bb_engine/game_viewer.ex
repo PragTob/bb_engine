@@ -69,6 +69,10 @@ defmodule BBEngine.GameViewer do
     "And #{event.actor_id} steals the ball from #{event.stolen_from}!"
   end
 
+  defp event_log(event = %Event.Block{}) do
+    "And #{event.actor_id} blocks the shot from #{event.blocked_player_id}!"
+  end
+
   defp game_clock(game_state) do
     "#{game_state.quarter} quarter #{format_clock(game_state.clock_seconds)}"
   end

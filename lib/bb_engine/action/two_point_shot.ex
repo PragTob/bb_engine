@@ -7,7 +7,7 @@ defmodule BBEngine.Action.TwoPointShot do
   @behaviour BBEngine.Action
 
   @impl true
-  @spec play(GameState.t()) :: {GameState.t(), Event.Shot.t()}
+  @spec play(GameState.t()) :: {GameState.t(), Event.Shot.t() | Event.Block.t()}
   def play(game_state) do
     {ball_handler, defender} = GameState.on_ball_matchup(game_state)
 
@@ -17,26 +17,43 @@ defmodule BBEngine.Action.TwoPointShot do
     {game_state, shot_event}
   end
 
-  @spec attempt(GameState.t(), Player.t(), Player.t(), number) :: {GameState.t(), Event.Shot.t()}
-  def attempt(game_state, ball_handler, opponent, duration, offensive_adjustment \\ 0) do
-    {game_state, success} =
-      Random.successful?(
-        game_state,
-        ball_handler.offensive_rating + offensive_adjustment,
-        opponent.defensive_rating
-      )
+  @makes_shot {:shot, true}
+  @misses_shot {:shot, false}
 
-    event = %Event.Shot{
+  @spec attempt(GameState.t(), Player.t(), Player.t(), number) ::
+          {GameState.t(), Event.Shot.t() | Event.Block.t()}
+  def attempt(game_state, ball_handler, opponent, duration, offensive_adjustment \\ 0) do
+    probabilities = %{
+      @makes_shot => ball_handler.offensive_rating + offensive_adjustment,
+      @misses_shot => 0.95 * opponent.defensive_rating,
+      :blocked => 0.05 * opponent.defensive_rating
+    }
+
+    {game_state, result} = Random.weighted(game_state, probabilities)
+
+    {game_state, resulting_event(result, ball_handler, opponent, duration)}
+  end
+
+  defp resulting_event({:shot, success}, ball_handler, defender, duration) do
+    %Event.Shot{
       actor_id: ball_handler.id,
-      defender_id: opponent.id,
+      defender_id: defender.id,
       team: ball_handler.team,
       success: success,
       type: :midrange,
       points: 2,
       duration: duration
     }
+  end
 
-    {game_state, event}
+  defp resulting_event(:blocked, ball_handler, defender, duration) do
+    %Event.Block{
+      actor_id: defender.id,
+      blocked_player_id: ball_handler.id,
+      type: :two_point,
+      team: defender.team,
+      duration: duration
+    }
   end
 
   @max_duration 6
