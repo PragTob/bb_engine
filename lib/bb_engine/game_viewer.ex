@@ -53,7 +53,7 @@ defmodule BBEngine.GameViewer do
     "#{event.actor_id} fails to make the #{event.type} shot against #{event.defender_id}"
   end
 
-  defp event_log(event = %Event.PossessionSwitch{}) do
+  defp event_log(event = %Event.ThrowIn{}) do
     "And the possession switches to #{event.to_player} from #{event.to_team}"
   end
 

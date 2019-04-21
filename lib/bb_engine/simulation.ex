@@ -91,11 +91,11 @@ defmodule BBEngine.Simulation do
   end
 
   defp reaction_action(%Event.Shot{success: false}), do: Action.Rebound
-  defp reaction_action(%Event.Shot{success: true}), do: Action.SwitchPossession
+  defp reaction_action(%Event.Shot{success: true}), do: Action.ThrowIn
   # not technically correct, no possession switch if the quarter clock runs out
-  defp reaction_action(%Event.Turnover{}), do: Action.SwitchPossession
+  defp reaction_action(%Event.Turnover{}), do: Action.ThrowIn
   defp reaction_action(%Event.Block{}), do: Action.BlockedShotRecover
-  defp reaction_action(%Event.DeflectedOutOfBounds{}), do: Action.SwitchPossession
+  defp reaction_action(%Event.DeflectedOutOfBounds{}), do: Action.ThrowIn
   defp reaction_action(_), do: nil
 
   @time_critical 8

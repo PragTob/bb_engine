@@ -22,7 +22,7 @@ defmodule BBEngine.Event do
   @type t ::
           Event.Rebound.t()
           | Event.Shot.t()
-          | Event.PossessionSwitch.t()
+          | Event.ThrowIn.t()
           | Event.Pass.t()
           | Event.Turnover.t()
           | Event.Steal.t()

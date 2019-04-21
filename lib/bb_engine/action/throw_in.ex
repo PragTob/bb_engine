@@ -1,4 +1,4 @@
-defmodule BBEngine.Action.SwitchPossession do
+defmodule BBEngine.Action.ThrowIn do
   alias BBEngine.GameState
   alias BBEngine.Event
   alias BBEngine.Random
@@ -7,13 +7,13 @@ defmodule BBEngine.Action.SwitchPossession do
   @behaviour BBEngine.Action
 
   @impl true
-  @spec play(GameState.t()) :: {GameState.t(), Event.PossessionSwitch.t()}
+  @spec play(GameState.t()) :: {GameState.t(), Event.ThrowIn.t()}
   def play(game_state = %GameState{possession: possession}) do
     opponent = opposite(possession)
     opponent_lineup = Map.fetch!(game_state, opponent).lineup
     {new_game_state, new_ball_handler} = Random.list_element(game_state, opponent_lineup)
 
-    event = %Event.PossessionSwitch{
+    event = %Event.ThrowIn{
       to_team: opponent,
       to_player: new_ball_handler,
       duration: 0

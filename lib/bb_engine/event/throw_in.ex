@@ -1,4 +1,4 @@
-defmodule BBEngine.Event.PossessionSwitch do
+defmodule BBEngine.Event.ThrowIn do
   alias BBEngine.Player
   alias BBEngine.Possession
   alias BBEngine.GameState
