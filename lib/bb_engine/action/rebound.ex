@@ -37,7 +37,7 @@ defmodule BBEngine.Action.Rebound do
 
   defp skills(game_state, team, skill) do
     game_state
-    |> GameState.players(team)
+    |> GameState.current_players(team)
     |> Player.skill_map(skill)
   end
 

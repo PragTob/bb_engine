@@ -27,6 +27,8 @@ defmodule BBEngine.Event do
           | Event.Turnover.t()
           | Event.Steal.t()
           | Event.Block.t()
+          | Event.BlockedShotRecovery.t()
+          | Event.DeflectedOutOfBounds.t()
 
   @callback update_game_state(GameState.t(), Event.t()) :: GameState.t()
 

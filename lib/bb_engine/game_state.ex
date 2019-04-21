@@ -60,8 +60,8 @@ defmodule BBEngine.GameState do
   @spec seconds_per_quarter() :: 600
   def seconds_per_quarter, do: @seconds_per_quarter
 
-  @spec players(t, Possession.t()) :: [Player.t(), ...]
-  def players(game_state, team) do
+  @spec current_players(t, Possession.t()) :: [Player.t(), ...]
+  def current_players(game_state, team) do
     game_state
     |> lineup(team)
     |> Enum.map(fn id -> Map.fetch!(game_state.players, id) end)

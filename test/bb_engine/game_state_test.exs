@@ -13,8 +13,8 @@ defmodule BBEngine.GameStateTest do
           %Squad{players: [%Player{id: 4}], lineup: [4]}
         )
 
-      assert [%Player{id: 1}, %Player{id: 5}] = players(game_state, :home)
-      assert [%Player{id: 4}] = players(game_state, :road)
+      assert [%Player{id: 1}, %Player{id: 5}] = current_players(game_state, :home)
+      assert [%Player{id: 4}] = current_players(game_state, :road)
     end
   end
 end

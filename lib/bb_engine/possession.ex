@@ -1,5 +1,5 @@
 defmodule BBEngine.Possession do
-  @type t :: :home | :opposite
+  @type t :: :home | :road
   @doc """
       iex> BBEngine.Possession.opposite(:home)
       :road

@@ -73,6 +73,18 @@ defmodule BBEngine.GameViewer do
     "And #{event.actor_id} blocks the shot from #{event.blocked_player_id}!"
   end
 
+  defp event_log(event = %Event.BlockedShotRecovery{type: :offensive}) do
+    "And #{event.actor_id} manages to snatch up the blocked shot, the offense maintains control!"
+  end
+
+  defp event_log(event = %Event.BlockedShotRecovery{type: :defensive}) do
+    "And #{event.actor_id} grabs a hold of the blocked shot, we go the other way."
+  end
+
+  defp event_log(event = %Event.DeflectedOutOfBounds{}) do
+    "The ball was deflected out of bounds by #{event.actor_id} - the offense keeps possession and we go to an inbounds play."
+  end
+
   defp game_clock(game_state) do
     "#{game_state.quarter} quarter #{format_clock(game_state.clock_seconds)}"
   end
