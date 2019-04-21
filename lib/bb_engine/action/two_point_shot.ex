@@ -20,7 +20,7 @@ defmodule BBEngine.Action.TwoPointShot do
   @makes_shot {:shot, true}
   @misses_shot {:shot, false}
 
-  @spec attempt(GameState.t(), Player.t(), Player.t(), number) ::
+  @spec attempt(GameState.t(), Player.t(), Player.t(), non_neg_integer, number) ::
           {GameState.t(), Event.Shot.t() | Event.Block.t()}
   def attempt(game_state, ball_handler, opponent, duration, offensive_adjustment \\ 0) do
     probabilities = %{

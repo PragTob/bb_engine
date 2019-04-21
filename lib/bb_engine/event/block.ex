@@ -21,7 +21,7 @@ defmodule BBEngine.Event.Block do
           actor_id: Player.id(),
           blocked_player_id: Player.id(),
           team: Possession.t(),
-          type: :two_point,
+          type: :two_point | :three_point,
           duration: non_neg_integer
         }
 
@@ -52,6 +52,15 @@ defmodule BBEngine.Event.Block do
       statistics
       | blocked_shots: statistics.blocked_shots + 1,
         two_points_attempted: statistics.two_points_attempted + 1,
+        field_goals_attempted: statistics.field_goals_attempted + 1
+    }
+  end
+
+  defp update_statistics(statistics, %__MODULE__{type: :three_point}) do
+    %Statistics{
+      statistics
+      | blocked_shots: statistics.blocked_shots + 1,
+        three_points_attempted: statistics.two_points_attempted + 1,
         field_goals_attempted: statistics.field_goals_attempted + 1
     }
   end
