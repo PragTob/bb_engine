@@ -1,14 +1,9 @@
-defmodule BBEngine.Event.DeflectedOutOfBounds do
-  alias BBEngine.Player
+defmodule BBEngine.Event.TimeRanOut do
   alias BBEngine.GameState
 
-  defstruct [
-    :actor_id,
-    :duration
-  ]
+  defstruct [:duration]
 
   @type t :: %__MODULE__{
-          actor_id: Player.id(),
           duration: non_neg_integer
         }
 
@@ -16,7 +11,6 @@ defmodule BBEngine.Event.DeflectedOutOfBounds do
   @impl true
   @spec update_game_state(GameState.t(), t) :: GameState.t()
   def update_game_state(game_state, _event) do
-    # An inbounds play follows
     put_in(game_state.ball_handler_id, nil)
   end
 end

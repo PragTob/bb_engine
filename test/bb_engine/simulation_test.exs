@@ -77,8 +77,9 @@ defmodule BBEngine.SimulationTest do
         |> simulate_event
 
       # right now one event is simulated
-      assert game_state.clock_seconds > 550
+      assert game_state.clock_seconds == 600
       assert game_state.quarter == 3
+      assert game_state.shot_clock == 24
     end
 
     test "we can go to over time" do

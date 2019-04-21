@@ -29,11 +29,32 @@ defmodule BBEngine.Event.Shot do
   @impl true
   @spec update_game_state(GameState.t(), t) :: GameState.t()
   def update_game_state(game_state, event) do
-    update_in(game_state.box_score, fn box_score ->
-      BoxScore.update(box_score, event.team, event.actor_id, fn stats ->
-        update_statistics(stats, event)
-      end)
-    end)
+    %GameState{
+      game_state
+      | ball_handler_id: nil,
+        possession: possession_after(game_state.possession, event),
+        shot_clock: shot_clock_seconds(game_state.shot_clock, event),
+        box_score:
+          BoxScore.update(game_state.box_score, event.team, event.actor_id, fn stats ->
+            update_statistics(stats, event)
+          end)
+    }
+  end
+
+  defp possession_after(possession, %__MODULE__{success: true}) do
+    Possession.opposite(possession)
+  end
+
+  defp possession_after(possession, _missed_shot) do
+    possession
+  end
+
+  defp shot_clock_seconds(_seconds, %__MODULE__{success: true}) do
+    GameState.shot_clock_seconds()
+  end
+
+  defp shot_clock_seconds(seconds, _) do
+    seconds
   end
 
   defp update_statistics(statistics, shot = %__MODULE__{success: true, points: 2}) do

@@ -22,7 +22,7 @@ defmodule BBEngine.Event.Turnover do
   @type t :: %__MODULE__{
           actor_id: Player.id(),
           team: Possession.t(),
-          type: :clock_violation,
+          type: :clock_violation | :out_of_bound_pass,
           duration: non_neg_integer
         }
 
@@ -33,6 +33,8 @@ defmodule BBEngine.Event.Turnover do
     %GameState{
       game_state
       | shot_clock: GameState.shot_clock_seconds(),
+        ball_handler_id: nil,
+        possession: Possession.opposite(game_state.possession),
         box_score:
           BoxScore.update(game_state.box_score, event.team, event.actor_id, fn stats ->
             update_in(stats.turnovers, &(&1 + 1))

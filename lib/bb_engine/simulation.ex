@@ -42,22 +42,46 @@ defmodule BBEngine.Simulation do
       {:done, game_state}
     else
       new_quarter = quarter + 1
-      %GameState{game_state | quarter: new_quarter, clock_seconds: quarter_seconds(new_quarter)}
+
+      %GameState{
+        game_state
+        | quarter: new_quarter,
+          clock_seconds: quarter_seconds(new_quarter),
+          shot_clock: GameState.shot_clock_seconds()
+      }
     end
   end
 
   def simulate_event(game_state = %GameState{shot_clock: 0}) do
-    shot_clock_violation = %Event.Turnover{
-      actor_id: game_state.ball_handler_id,
-      team: game_state.possession,
-      type: :clock_violation,
-      duration: 0
-    }
+    if Enum.member?([Event.Shot, Event.Rebound], last_event_type(game_state)) do
+      simulate_next_action(game_state)
+    else
+      shot_clock_violation = %Event.Turnover{
+        actor_id: game_state.ball_handler_id,
+        team: game_state.possession,
+        type: :clock_violation,
+        duration: 0
+      }
 
-    apply_event({game_state, shot_clock_violation})
+      apply_event({game_state, shot_clock_violation})
+    end
   end
 
   def simulate_event(game_state) do
+    simulate_next_action(game_state)
+  end
+
+  # TODO: REWORK THIS
+  defp last_event_type(%GameState{events: []}) do
+    nil
+  end
+
+  defp last_event_type(game_state) do
+    [last_event | _] = game_state.events
+    last_event.__struct__
+  end
+
+  defp simulate_next_action(game_state) do
     game_state
     |> next_action
     |> play_action
@@ -96,6 +120,7 @@ defmodule BBEngine.Simulation do
   defp reaction_action(%Event.Turnover{}), do: Action.ThrowIn
   defp reaction_action(%Event.Block{}), do: Action.BlockedShotRecover
   defp reaction_action(%Event.DeflectedOutOfBounds{}), do: Action.ThrowIn
+  defp reaction_action(%Event.TimeRanOut{}), do: Action.ThrowIn
   defp reaction_action(_), do: nil
 
   @time_critical 8
@@ -120,23 +145,27 @@ defmodule BBEngine.Simulation do
   end
 
   defp catch_time_violations({game_state, event}) do
-    max_time = GameState.remaining_time(game_state)
-
     event =
-      if event.duration > max_time do
-        # We need to somehow take care that this doesn't happen with
-        # steals/blocks because then it should be a TO _before_ the
-        # steal/block happens
-        # also the event could get some information on context, like
-        # someone didn't get the shot off in time or whatever
-        %Event.Turnover{
-          actor_id: game_state.ball_handler_id,
-          team: game_state.possession,
-          type: :clock_violation,
-          duration: max_time
+      if event.duration > game_state.clock_seconds do
+        %Event.TimeRanOut{
+          duration: game_state.clock_seconds
         }
       else
-        event
+        if event.duration > game_state.shot_clock && event.__struct__ != Event.Rebound do
+          # We need to somehow take care that this doesn't happen with
+          # steals/blocks because then it should be a TO _before_ the
+          # steal/block happens
+          # also the event could get some information on context, like
+          # someone didn't get the shot off in time or whatever
+          %Event.Turnover{
+            actor_id: game_state.ball_handler_id,
+            team: game_state.possession,
+            type: :clock_violation,
+            duration: game_state.shot_clock
+          }
+        else
+          event
+        end
       end
 
     {game_state, event}

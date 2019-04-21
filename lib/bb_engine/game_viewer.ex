@@ -54,7 +54,7 @@ defmodule BBEngine.GameViewer do
   end
 
   defp event_log(event = %Event.ThrowIn{}) do
-    "And the possession switches to #{event.to_player} from #{event.to_team}"
+    "A throw-in to #{event.to_player}"
   end
 
   defp event_log(event = %Event.Turnover{type: :clock_violation}) do
@@ -85,14 +85,18 @@ defmodule BBEngine.GameViewer do
     "The ball was deflected out of bounds by #{event.actor_id} - the offense keeps possession and we go to an inbounds play."
   end
 
+  defp event_log(%Event.TimeRanOut{}) do
+    "And this quarter is over!"
+  end
+
   defp game_clock(game_state) do
-    "#{game_state.quarter} quarter #{format_clock(game_state.clock_seconds)}"
+    "#{game_state.quarter} qt #{format_clock(game_state.clock_seconds)} (#{game_state.shot_clock})"
   end
 
   @seconds_per_minute 60
   defp format_clock(seconds) do
-    seconds = rem(seconds, @seconds_per_minute)
-    "#{div(seconds, @seconds_per_minute)}:#{seconds_padding(seconds)}#{seconds}"
+    seconds_part = rem(seconds, @seconds_per_minute)
+    "#{div(seconds, @seconds_per_minute)}:#{seconds_padding(seconds_part)}#{seconds_part}"
   end
 
   defp seconds_padding(seconds) when seconds <= 9, do: "0"
