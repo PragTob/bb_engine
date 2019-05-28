@@ -14,7 +14,7 @@ defmodule BBEngine.GameViewer do
 
   defp proceed_simulation(game_state) do
     game_state
-    |> Simulation.simulate_event()
+    |> Simulation.advance_simulation()
     |> log_event
     |> proceed_simulation
   end

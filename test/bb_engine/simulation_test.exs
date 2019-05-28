@@ -49,12 +49,12 @@ defmodule BBEngine.SimulationTest do
     end
   end
 
-  describe ".proceed_simulation" do
+  describe ".run_simulation" do
     test "can safely move on to and simulate overtime" do
       game_state =
         %{clock_seconds: 0, quarter: 4}
         |> TestHelper.build_game_state()
-        |> proceed_simulation()
+        |> run_simulation()
 
       # right now one event is simulated
       assert game_state.clock_seconds <= 0
@@ -74,7 +74,7 @@ defmodule BBEngine.SimulationTest do
       game_state =
         %{clock_seconds: 0, quarter: 2}
         |> TestHelper.build_game_state()
-        |> simulate_event
+        |> advance_simulation
 
       # right now one event is simulated
       assert game_state.clock_seconds == 600
@@ -86,7 +86,7 @@ defmodule BBEngine.SimulationTest do
       game_state =
         %{clock_seconds: 0, quarter: 4}
         |> TestHelper.build_game_state()
-        |> simulate_event
+        |> advance_simulation
 
       # right now one event is simulated
       assert game_state.clock_seconds > 250
@@ -99,7 +99,7 @@ defmodule BBEngine.SimulationTest do
                %{clock_seconds: 0, quarter: 4}
                |> TestHelper.build_game_state()
                |> add_home_points
-               |> simulate_event
+               |> advance_simulation
 
       assert game_state.clock_seconds == 0
       assert game_state.quarter == 4
@@ -109,7 +109,7 @@ defmodule BBEngine.SimulationTest do
       game_state =
         %{clock_seconds: 40, quarter: 2, shot_clock: 0}
         |> TestHelper.build_game_state()
-        |> simulate_event
+        |> advance_simulation
 
       [last_event | _] = game_state.events
 

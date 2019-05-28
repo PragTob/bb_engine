@@ -13,7 +13,7 @@ defmodule BBEngine.Simulation do
   def simulate(home_squad, road_squad, seed \\ Random.seed()) do
     home_squad
     |> new(road_squad, seed)
-    |> proceed_simulation
+    |> run_simulation
   end
 
   defp jump_ball(game_state) do
@@ -22,26 +22,33 @@ defmodule BBEngine.Simulation do
     %GameState{new_game_state | ball_handler_id: winner, possession: :home}
   end
 
+  @doc """
+  Will run the simulation until the game is finished.
+  """
   @final_quarter 4
-  @spec proceed_simulation(GameState.t()) :: GameState.t()
-  def proceed_simulation({:done, game_state}) do
+  @spec run_simulation(GameState.t()) :: GameState.t()
+  def run_simulation({:done, game_state}) do
     game_state
   end
 
-  def proceed_simulation(game_state) do
+  def run_simulation(game_state) do
     game_state
-    |> simulate_event
-    |> proceed_simulation
+    |> advance_simulation
+    |> run_simulation
   end
 
-  @spec simulate_event(GameState.t()) :: GameState.t() | {:done, GameState.t()}
-  def simulate_event(game_state = %GameState{quarter: quarter, clock_seconds: clock_seconds})
+  @doc """
+  Advances the simulation one step/action at a time.
+  """
+  @spec advance_simulation(GameState.t()) :: GameState.t() | {:done, GameState.t()}
+  def advance_simulation(game_state = %GameState{clock_seconds: clock_seconds})
       when clock_seconds <= 0 do
     # Do substitutions etc.
     if finished?(game_state) do
       {:done, game_state}
     else
-      new_quarter = quarter + 1
+      # Put into event
+      new_quarter = game_state.quarter + 1
 
       %GameState{
         game_state
@@ -52,38 +59,12 @@ defmodule BBEngine.Simulation do
     end
   end
 
-  def simulate_event(game_state = %GameState{shot_clock: 0}) do
-    if Enum.member?([Event.Shot, Event.Rebound], last_event_type(game_state)) do
-      simulate_next_action(game_state)
-    else
-      shot_clock_violation = %Event.Turnover{
-        actor_id: game_state.ball_handler_id,
-        team: game_state.possession,
-        type: :clock_violation,
-        duration: 0
-      }
-
-      apply_event({game_state, shot_clock_violation})
-    end
-  end
-
-  def simulate_event(game_state) do
-    simulate_next_action(game_state)
-  end
-
-  # TODO: REWORK THIS
-  defp last_event_type(%GameState{events: []}) do
-    nil
-  end
-
-  defp last_event_type(game_state) do
-    [last_event | _] = game_state.events
-    last_event.__struct__
-  end
-
-  defp simulate_next_action(game_state) do
+  def advance_simulation(game_state) do
+    # we could check for an expired shot clock here and only determine actions etc.
+    # if the shot clock isn't expired but that'd double the check with after the action
+    # was taken for probably not too many winnings.
     game_state
-    |> next_action
+    |> determine_next_action
     |> play_action
     |> catch_time_violations
     |> apply_event
@@ -98,13 +79,13 @@ defmodule BBEngine.Simulation do
   defp quarter_seconds(quarter) when quarter <= @final_quarter, do: @seconds_per_quarter
   defp quarter_seconds(_quarter), do: @seconds_per_overtime
 
-  @spec next_action(GameState.t()) :: {GameState.t(), module}
-  defp next_action(game_state = %GameState{events: []}) do
+  @spec determine_next_action(GameState.t()) :: {GameState.t(), module}
+  defp determine_next_action(game_state = %GameState{events: []}) do
     # should be jump ball
     {game_state, Action.Pass}
   end
 
-  defp next_action(game_state = %GameState{events: [last_event | _]}) do
+  defp determine_next_action(game_state = %GameState{events: [last_event | _]}) do
     reaction = reaction_action(last_event)
 
     if reaction do
@@ -116,7 +97,6 @@ defmodule BBEngine.Simulation do
 
   defp reaction_action(%Event.Shot{success: false}), do: Action.Rebound
   defp reaction_action(%Event.Shot{success: true}), do: Action.ThrowIn
-  # not technically correct, no possession switch if the quarter clock runs out
   defp reaction_action(%Event.Turnover{}), do: Action.ThrowIn
   defp reaction_action(%Event.Block{}), do: Action.BlockedShotRecover
   defp reaction_action(%Event.DeflectedOutOfBounds{}), do: Action.ThrowIn

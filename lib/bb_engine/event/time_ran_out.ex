@@ -1,6 +1,10 @@
 defmodule BBEngine.Event.TimeRanOut do
   alias BBEngine.GameState
 
+  @doc """
+  Time of the quarter ran out. Play subsides, no TOs or whatever are handed out.
+  """
+
   defstruct [:duration]
 
   @type t :: %__MODULE__{
