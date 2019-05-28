@@ -30,6 +30,7 @@ defmodule BBEngine.Event do
           | Event.BlockedShotRecovery.t()
           | Event.DeflectedOutOfBounds.t()
           | Event.TimeRanOut.t()
+          | Event.GameFinished.t()
 
   @callback update_game_state(GameState.t(), Event.t()) :: GameState.t()
 

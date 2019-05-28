@@ -25,9 +25,8 @@ defmodule BBEngine.Simulation do
   @doc """
   Will run the simulation until the game is finished.
   """
-  @final_quarter 4
   @spec run_simulation(GameState.t()) :: GameState.t()
-  def run_simulation({:done, game_state}) do
+  def run_simulation(game_state = %GameState{events: [%Event.GameFinished{} | _]}) do
     game_state
   end
 
@@ -40,44 +39,14 @@ defmodule BBEngine.Simulation do
   @doc """
   Advances the simulation one step/action at a time.
   """
-  @spec advance_simulation(GameState.t()) :: GameState.t() | {:done, GameState.t()}
-  def advance_simulation(game_state = %GameState{clock_seconds: clock_seconds})
-      when clock_seconds <= 0 do
-    # Do substitutions etc.
-    if finished?(game_state) do
-      {:done, game_state}
-    else
-      # Put into event
-      new_quarter = game_state.quarter + 1
-
-      %GameState{
-        game_state
-        | quarter: new_quarter,
-          clock_seconds: quarter_seconds(new_quarter),
-          shot_clock: GameState.shot_clock_seconds()
-      }
-    end
-  end
-
   def advance_simulation(game_state) do
     # we could check for an expired shot clock here and only determine actions etc.
     # if the shot clock isn't expired but that'd double the check with after the action
     # was taken for probably not too many winnings.
     game_state
     |> determine_next_action
-    |> play_action
-    |> catch_time_violations
-    |> apply_event
+    |> simulate_action()
   end
-
-  defp finished?(game_state) do
-    game_state.quarter >= @final_quarter && !BoxScore.tie?(game_state.box_score)
-  end
-
-  @seconds_per_quarter GameState.seconds_per_quarter()
-  @seconds_per_overtime 5 * 60
-  defp quarter_seconds(quarter) when quarter <= @final_quarter, do: @seconds_per_quarter
-  defp quarter_seconds(_quarter), do: @seconds_per_overtime
 
   @spec determine_next_action(GameState.t()) :: {GameState.t(), module}
   defp determine_next_action(game_state = %GameState{events: []}) do
@@ -119,24 +88,27 @@ defmodule BBEngine.Simulation do
     Random.weighted(game_state, @action_probability_map)
   end
 
-  @spec play_action({GameState.t(), module}) :: {GameState.t(), Event.t()}
-  defp play_action({game_state, action_module}) do
-    action_module.play(game_state)
+  @spec simulate_action({GameState.t(), module}) :: GameState.t()
+  def simulate_action({game_state, action_module}) do
+    game_state
+    |> action_module.play
+    |> catch_time_violations
+    |> apply_event
   end
 
   defp catch_time_violations({game_state, event}) do
-    event =
+    event_happening =
       if event.duration > game_state.clock_seconds do
-        %Event.TimeRanOut{
-          duration: game_state.clock_seconds
-        }
+        if finished?(game_state) do
+          %Event.GameFinished{duration: game_state.clock_seconds}
+        else
+          %Event.TimeRanOut{duration: game_state.clock_seconds}
+        end
       else
-        if event.duration > game_state.shot_clock && event.__struct__ != Event.Rebound do
-          # We need to somehow take care that this doesn't happen with
-          # steals/blocks because then it should be a TO _before_ the
-          # steal/block happens
-          # also the event could get some information on context, like
-          # someone didn't get the shot off in time or whatever
+        # happens mostly/intendedly for rebounds but theoretically should apply to all
+        # situations where no one has PLAYER CONTROL but the shot clock is only really
+        # reset once it is established
+        if event.duration >= game_state.shot_clock && game_state.ball_handler_id do
           %Event.Turnover{
             actor_id: game_state.ball_handler_id,
             team: game_state.possession,
@@ -148,7 +120,11 @@ defmodule BBEngine.Simulation do
         end
       end
 
-    {game_state, event}
+    {game_state, event_happening}
+  end
+
+  defp finished?(game_state) do
+    game_state.quarter >= GameState.final_quarter() && !BoxScore.tie?(game_state.box_score)
   end
 
   defp apply_event({game_state, event}) do

@@ -57,6 +57,12 @@ defmodule BBEngine.Action.Forced do
   end
 
   defp elapsed_time(game_state) do
-    Random.uniform_int(game_state, GameState.remaining_time(game_state))
+    remaining_time = GameState.remaining_time(game_state)
+
+    if remaining_time > 0 do
+      Random.uniform_int(game_state, remaining_time)
+    else
+      {game_state, 0}
+    end
   end
 end

@@ -60,6 +60,9 @@ defmodule BBEngine.GameState do
   @spec seconds_per_quarter() :: 600
   def seconds_per_quarter, do: @seconds_per_quarter
 
+  @final_quarter 4
+  def final_quarter, do: @final_quarter
+
   @spec current_players(t, Possession.t()) :: [Player.t(), ...]
   def current_players(game_state, team) do
     game_state

@@ -8,7 +8,7 @@ defmodule BBEngine.GameViewer do
     |> proceed_simulation
   end
 
-  defp proceed_simulation({:done, game_state}) do
+  defp proceed_simulation(game_state = %GameState{events: [%Event.GameFinished{} | _]}) do
     game_state
   end
 
@@ -25,11 +25,6 @@ defmodule BBEngine.GameViewer do
     |> IO.puts()
 
     game_state
-  end
-
-  defp log_event({:done, game_state}) do
-    IO.puts("game is over apparently")
-    {:done, game_state}
   end
 
   defp log_it(game_state, event) do
@@ -87,6 +82,10 @@ defmodule BBEngine.GameViewer do
 
   defp event_log(%Event.TimeRanOut{}) do
     "And this quarter is over!"
+  end
+
+  defp event_log(%Event.GameFinished{}) do
+    "Game is over apparently!"
   end
 
   defp game_clock(game_state) do

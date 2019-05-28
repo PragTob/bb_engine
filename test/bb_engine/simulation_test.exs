@@ -1,6 +1,7 @@
 defmodule BBEngine.SimulationTest do
   use ExUnit.Case
   alias BBEngine.{Event, GameState, Random, BoxScore, TestHelper}
+  alias BBEngine.BoxScore.Statistics
   import BBEngine.Simulation
 
   @home_squad TestHelper.home_squad()
@@ -69,7 +70,7 @@ defmodule BBEngine.SimulationTest do
     end
   end
 
-  describe ".simulate_event" do
+  describe ".advance_simulation" do
     test "quarters move on" do
       game_state =
         %{clock_seconds: 0, quarter: 2}
@@ -95,11 +96,13 @@ defmodule BBEngine.SimulationTest do
     end
 
     test "game ends if scores are different" do
-      assert {:done, game_state} =
+      assert game_state =
                %{clock_seconds: 0, quarter: 4}
                |> TestHelper.build_game_state()
                |> add_home_points
                |> advance_simulation
+
+      assert [%Event.GameFinished{} | _] = game_state.events
 
       assert game_state.clock_seconds == 0
       assert game_state.quarter == 4
@@ -127,7 +130,20 @@ defmodule BBEngine.SimulationTest do
       points: 2
     }
 
-    BBEngine.Event.Shot.update_game_state(game_state, event)
+    %GameState{
+      game_state
+      | box_score:
+          BoxScore.update(game_state.box_score, event.team, event.actor_id, fn statistics ->
+            %Statistics{
+              statistics
+              | points: statistics.points + event.points,
+                field_goals_attempted: statistics.field_goals_attempted + 1,
+                field_goals_made: statistics.field_goals_made + 1,
+                two_points_attempted: statistics.two_points_attempted + 1,
+                two_points_made: statistics.two_points_made + 1
+            }
+          end)
+    }
   end
 
   defp assert_stats_add_up(box_score_stats) do

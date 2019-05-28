@@ -15,6 +15,20 @@ defmodule BBEngine.Event.TimeRanOut do
   @impl true
   @spec update_game_state(GameState.t(), t) :: GameState.t()
   def update_game_state(game_state, _event) do
-    put_in(game_state.ball_handler_id, nil)
+    new_quarter = game_state.quarter + 1
+
+    %GameState{
+      game_state
+      | ball_handler_id: nil,
+        quarter: new_quarter,
+        clock_seconds: quarter_seconds(new_quarter),
+        shot_clock: GameState.shot_clock_seconds()
+    }
   end
+
+  @final_quarter GameState.final_quarter()
+  @seconds_per_quarter GameState.seconds_per_quarter()
+  @seconds_per_overtime 5 * 60
+  defp quarter_seconds(quarter) when quarter <= @final_quarter, do: @seconds_per_quarter
+  defp quarter_seconds(_quarter), do: @seconds_per_overtime
 end
