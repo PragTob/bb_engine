@@ -27,6 +27,7 @@ defmodule BBEngine.Event do
           | Event.Turnover.t()
           | Event.Steal.t()
           | Event.Block.t()
+          | Event.Foul.t()
           | Event.BlockedShotRecovery.t()
           | Event.DeflectedOutOfBounds.t()
           | Event.EndOfQuarter.t()

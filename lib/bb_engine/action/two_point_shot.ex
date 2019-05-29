@@ -22,16 +22,17 @@ defmodule BBEngine.Action.TwoPointShot do
 
   @spec attempt(GameState.t(), Player.t(), Player.t(), non_neg_integer, number) ::
           {GameState.t(), Event.Shot.t() | Event.Block.t()}
-  def attempt(game_state, ball_handler, opponent, duration, offensive_adjustment \\ 0) do
+  def attempt(game_state, ball_handler, defender, duration, offensive_adjustment \\ 0) do
     probabilities = %{
       @makes_shot => ball_handler.offensive_rating + offensive_adjustment,
-      @misses_shot => 0.95 * opponent.defensive_rating,
-      :blocked => 0.05 * opponent.defensive_rating
+      @misses_shot => 0.95 * defender.defensive_rating,
+      :blocked => 0.05 * defender.defensive_rating,
+      :foul_before_shot => 0.02 * ball_handler.offensive_rating - 0.01 * defender.defensive_rating
     }
 
     {game_state, result} = Random.weighted(game_state, probabilities)
 
-    {game_state, resulting_event(result, ball_handler, opponent, duration)}
+    {game_state, resulting_event(result, ball_handler, defender, duration)}
   end
 
   defp resulting_event({:shot, success}, ball_handler, defender, duration) do
@@ -52,6 +53,16 @@ defmodule BBEngine.Action.TwoPointShot do
       blocked_player_id: ball_handler.id,
       type: :two_point,
       team: defender.team,
+      duration: duration
+    }
+  end
+
+  defp resulting_event(:foul_before_shot, ball_handler, defender, duration) do
+    %Event.Foul{
+      actor_id: defender.id,
+      team: defender.team,
+      fouled_player_id: ball_handler.id,
+      during_shot: false,
       duration: duration
     }
   end
