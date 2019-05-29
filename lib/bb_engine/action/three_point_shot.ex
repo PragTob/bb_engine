@@ -3,11 +3,14 @@ defmodule BBEngine.Action.ThreePointShot do
   alias BBEngine.Event
   alias BBEngine.GameState
   alias BBEngine.Player
+  alias BBEngine.Action.TwoPointShot
 
   @behaviour BBEngine.Action
 
+  @type result :: TwoPointShot.result()
+
   @impl true
-  @spec play(GameState.t()) :: {GameState.t(), Event.Shot.t()}
+  @spec play(GameState.t()) :: {GameState.t(), result}
   def play(game_state) do
     {ball_handler, defender} = GameState.on_ball_matchup(game_state)
 
@@ -22,18 +25,19 @@ defmodule BBEngine.Action.ThreePointShot do
   @misses_shot {:shot, false}
 
   @spec attempt(GameState.t(), Player.t(), Player.t(), non_neg_integer, number) ::
-          {GameState.t(), Event.Shot.t() | Event.Block.t()}
-  def attempt(game_state, ball_handler, opponent, duration, offensive_adjustment \\ 0) do
+          {GameState.t(), result}
+  def attempt(game_state, ball_handler, defender, duration, offensive_adjustment \\ 0) do
     probabilities = %{
       @makes_shot =>
         (ball_handler.offensive_rating + offensive_adjustment) * @three_point_difficulty_modifier,
-      @misses_shot => 0.99 * opponent.defensive_rating,
-      :blocked => 0.01 * opponent.defensive_rating
+      @misses_shot => 0.99 * defender.defensive_rating,
+      :blocked => 0.01 * defender.defensive_rating,
+      :foul_before_shot => 0.02 * ball_handler.offensive_rating - 0.01 * defender.defensive_rating
     }
 
     {game_state, result} = Random.weighted(game_state, probabilities)
 
-    {game_state, resulting_event(result, ball_handler, opponent, duration)}
+    {game_state, resulting_event(result, ball_handler, defender, duration)}
   end
 
   defp resulting_event({:shot, success}, ball_handler, defender, duration) do
@@ -54,6 +58,16 @@ defmodule BBEngine.Action.ThreePointShot do
       blocked_player_id: ball_handler.id,
       type: :three_point,
       team: defender.team,
+      duration: duration
+    }
+  end
+
+  defp resulting_event(:foul_before_shot, ball_handler, defender, duration) do
+    %Event.Foul{
+      actor_id: defender.id,
+      team: defender.team,
+      fouled_player_id: ball_handler.id,
+      during_shot: false,
       duration: duration
     }
   end

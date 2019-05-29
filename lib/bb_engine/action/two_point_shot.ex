@@ -6,8 +6,9 @@ defmodule BBEngine.Action.TwoPointShot do
 
   @behaviour BBEngine.Action
 
+  @type result :: Event.Shot.t() | Event.Block.t() | Event.Foul.t()
   @impl true
-  @spec play(GameState.t()) :: {GameState.t(), Event.Shot.t() | Event.Block.t()}
+  @spec play(GameState.t()) :: {GameState.t(), result}
   def play(game_state) do
     {ball_handler, defender} = GameState.on_ball_matchup(game_state)
 
@@ -21,7 +22,7 @@ defmodule BBEngine.Action.TwoPointShot do
   @misses_shot {:shot, false}
 
   @spec attempt(GameState.t(), Player.t(), Player.t(), non_neg_integer, number) ::
-          {GameState.t(), Event.Shot.t() | Event.Block.t()}
+          {GameState.t(), result}
   def attempt(game_state, ball_handler, defender, duration, offensive_adjustment \\ 0) do
     probabilities = %{
       @makes_shot => ball_handler.offensive_rating + offensive_adjustment,
