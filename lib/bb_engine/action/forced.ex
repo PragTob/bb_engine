@@ -8,7 +8,13 @@ defmodule BBEngine.Action.Forced do
   @behaviour BBEngine.Action
 
   @impl true
-  @spec play(GameState.t()) :: {GameState.t(), Event.Shot.t() | Event.Turnover.t()}
+  @spec play(GameState.t()) ::
+          {GameState.t(),
+           Event.Shot.t()
+           | Event.Block.t()
+           | Event.Turnover.t()
+           | Event.EndOfQuarter.t()
+           | Event.GameFinished.t()}
   def play(game_state) do
     {ball_handler, defender} = GameState.on_ball_matchup(game_state)
     remaining_time = GameState.remaining_time(game_state)
@@ -79,10 +85,6 @@ defmodule BBEngine.Action.Forced do
   end
 
   defp elapsed_time(game_state, remaining_time) do
-    if remaining_time > 0 do
-      Random.uniform_int(game_state, remaining_time)
-    else
-      {game_state, 0}
-    end
+    Random.uniform_int(game_state, remaining_time)
   end
 end
