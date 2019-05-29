@@ -67,6 +67,8 @@ defmodule BBEngine.Simulation do
   defp reaction_action(%Event.Shot{success: false}), do: Action.Rebound
   defp reaction_action(%Event.Shot{success: true}), do: Action.ThrowIn
   defp reaction_action(%Event.Turnover{}), do: Action.ThrowIn
+  # look at game state to see if team foul is too high
+  defp reaction_action(%Event.Foul{during_shot: false}), do: Action.ThrowIn
   defp reaction_action(%Event.Block{}), do: Action.BlockedShotRecover
   defp reaction_action(%Event.DeflectedOutOfBounds{}), do: Action.ThrowIn
   defp reaction_action(%Event.EndOfQuarter{}), do: Action.ThrowIn

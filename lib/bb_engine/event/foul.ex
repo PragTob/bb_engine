@@ -30,7 +30,8 @@ defmodule BBEngine.Event.Foul do
   def update_game_state(game_state, event) do
     %GameState{
       game_state
-      | box_score: update_box_score(game_state.box_score, event)
+      | ball_handler_id: nil,
+        box_score: update_box_score(game_state.box_score, event)
     }
   end
 
