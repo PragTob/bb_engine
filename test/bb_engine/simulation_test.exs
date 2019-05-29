@@ -108,6 +108,21 @@ defmodule BBEngine.SimulationTest do
       assert game_state.quarter == 4
     end
 
+    test "game ends if scores are different also if a forced action occurs" do
+      assert game_state =
+               %{clock_seconds: 0, quarter: 4}
+               |> TestHelper.build_game_state()
+               |> add_home_points
+               # results in a forced play as no events atm leads to a pass
+               |> add_event
+               |> advance_simulation
+
+      assert [%Event.GameFinished{} | _] = game_state.events
+
+      assert game_state.clock_seconds == 0
+      assert game_state.quarter == 4
+    end
+
     test "if the shot clock is exhaused we create a turnover" do
       game_state =
         %{clock_seconds: 40, quarter: 2, shot_clock: 0}
@@ -143,6 +158,13 @@ defmodule BBEngine.SimulationTest do
                 two_points_made: statistics.two_points_made + 1
             }
           end)
+    }
+  end
+
+  defp add_event(game_state) do
+    %GameState{
+      game_state
+      | events: [%Event.Pass{} | game_state.events]
     }
   end
 

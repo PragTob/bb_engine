@@ -123,7 +123,7 @@ defmodule BBEngine.Simulation do
     {game_state, event_happening}
   end
 
-  defp finished?(game_state) do
+  def finished?(game_state) do
     game_state.quarter >= GameState.final_quarter() && !BoxScore.tie?(game_state.box_score)
   end
 

@@ -1,5 +1,6 @@
 defmodule BBEngine.Action.Forced do
   alias BBEngine.GameState
+  alias BBEngine.Simulation
   alias BBEngine.Random
   alias BBEngine.Event
   alias BBEngine.Action.TwoPointShot
@@ -31,9 +32,18 @@ defmodule BBEngine.Action.Forced do
   defp time_violation(game_state) do
     event =
       if end_of_quarter?(game_state) do
-        %Event.EndOfQuarter{
-          duration: game_state.clock_seconds
-        }
+        # This is kinda duplicated from simulation, I'm not sure how to best resolve the
+        # duplication. We could emit wrong events (turnovers) here and let the other code
+        # clean it up but that feels wrong.
+        # We could also make all time management happen in forced actions, that's dangerous
+        # though because we'd need to make sure that everything that could run over time
+        # would always end up here which is tough... but might be worth it.
+        # How about a throw in after a made shot? Well forced could handle it. Hmm.
+        if Simulation.finished?(game_state) do
+          %Event.GameFinished{duration: game_state.clock_seconds}
+        else
+          %Event.EndOfQuarter{duration: game_state.clock_seconds}
+        end
       else
         %Event.Turnover{
           actor_id: game_state.ball_handler_id,
