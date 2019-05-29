@@ -69,7 +69,7 @@ defmodule BBEngine.Simulation do
   defp reaction_action(%Event.Turnover{}), do: Action.ThrowIn
   defp reaction_action(%Event.Block{}), do: Action.BlockedShotRecover
   defp reaction_action(%Event.DeflectedOutOfBounds{}), do: Action.ThrowIn
-  defp reaction_action(%Event.TimeRanOut{}), do: Action.ThrowIn
+  defp reaction_action(%Event.EndOfQuarter{}), do: Action.ThrowIn
   defp reaction_action(_), do: nil
 
   @time_critical 8
@@ -102,7 +102,7 @@ defmodule BBEngine.Simulation do
         if finished?(game_state) do
           %Event.GameFinished{duration: game_state.clock_seconds}
         else
-          %Event.TimeRanOut{duration: game_state.clock_seconds}
+          %Event.EndOfQuarter{duration: game_state.clock_seconds}
         end
       else
         # happens mostly/intendedly for rebounds but theoretically should apply to all

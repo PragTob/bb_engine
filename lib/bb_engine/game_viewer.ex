@@ -80,7 +80,7 @@ defmodule BBEngine.GameViewer do
     "The ball was deflected out of bounds by #{event.actor_id} - the offense keeps possession and we go to an inbounds play."
   end
 
-  defp event_log(%Event.TimeRanOut{}) do
+  defp event_log(%Event.EndOfQuarter{}) do
     "And this quarter is over!"
   end
 

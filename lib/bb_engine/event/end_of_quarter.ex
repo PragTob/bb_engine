@@ -1,4 +1,4 @@
-defmodule BBEngine.Event.TimeRanOut do
+defmodule BBEngine.Event.EndOfQuarter do
   alias BBEngine.GameState
 
   @doc """

@@ -10,20 +10,44 @@ defmodule BBEngine.Action.Forced do
   @spec play(GameState.t()) :: {GameState.t(), Event.Shot.t() | Event.Turnover.t()}
   def play(game_state) do
     {ball_handler, defender} = GameState.on_ball_matchup(game_state)
+    remaining_time = GameState.remaining_time(game_state)
 
-    {game_state, turnover?} = turnover?(game_state, ball_handler, defender)
-    {game_state, duration} = elapsed_time(game_state)
+    {game_state, time_ran_out?} =
+      time_ran_out?(game_state, ball_handler, defender, remaining_time)
 
-    if turnover? do
-      turnover(game_state, ball_handler, duration)
+    if time_ran_out? || remaining_time == 0 do
+      time_violation(game_state)
     else
+      {game_state, duration} = elapsed_time(game_state, remaining_time)
       shot_attempt(game_state, ball_handler, defender, duration)
     end
   end
 
-  defp turnover?(game_state, ball_handler, opponent) do
+  defp time_ran_out?(game_state, ball_handler, opponent, _remaining_time) do
     # take into account time and maybe experience etc...
     Random.successful?(game_state, ball_handler.offensive_rating, opponent.defensive_rating)
+  end
+
+  defp time_violation(game_state) do
+    event =
+      if end_of_quarter?(game_state) do
+        %Event.EndOfQuarter{
+          duration: game_state.clock_seconds
+        }
+      else
+        %Event.Turnover{
+          actor_id: game_state.ball_handler_id,
+          team: game_state.possession,
+          type: :clock_violation,
+          duration: game_state.shot_clock
+        }
+      end
+
+    {game_state, event}
+  end
+
+  defp end_of_quarter?(game_state) do
+    game_state.clock_seconds <= game_state.shot_clock
   end
 
   @forced_shot_malus -15
@@ -44,21 +68,7 @@ defmodule BBEngine.Action.Forced do
     {game_state, shot_event}
   end
 
-  defp turnover(game_state, ball_handler, duration) do
-    {
-      game_state,
-      %Event.Turnover{
-        actor_id: ball_handler.id,
-        team: ball_handler.team,
-        type: :clock_violation,
-        duration: duration
-      }
-    }
-  end
-
-  defp elapsed_time(game_state) do
-    remaining_time = GameState.remaining_time(game_state)
-
+  defp elapsed_time(game_state, remaining_time) do
     if remaining_time > 0 do
       Random.uniform_int(game_state, remaining_time)
     else
