@@ -54,8 +54,8 @@ defmodule BBEngine.Simulation do
     {game_state, Action.Pass}
   end
 
-  defp determine_next_action(game_state = %GameState{events: [last_event | _]}) do
-    reaction = reaction_action(last_event)
+  defp determine_next_action(game_state = %GameState{events: [previous_event | _]}) do
+    reaction = reaction_action(previous_event, game_state)
 
     if reaction do
       {game_state, reaction}
@@ -64,15 +64,16 @@ defmodule BBEngine.Simulation do
     end
   end
 
-  defp reaction_action(%Event.Shot{success: false}), do: Action.Rebound
-  defp reaction_action(%Event.Shot{success: true}), do: Action.ThrowIn
-  defp reaction_action(%Event.Turnover{}), do: Action.ThrowIn
+  @spec reaction_action(Event.t(), GameState.t()) :: Action.t()
+  defp reaction_action(%Event.Shot{success: false}, _), do: Action.Rebound
+  defp reaction_action(%Event.Shot{success: true}, _), do: Action.ThrowIn
+  defp reaction_action(%Event.Turnover{}, _), do: Action.ThrowIn
   # look at game state to see if team foul is too high
-  defp reaction_action(%Event.Foul{during_shot: false}), do: Action.ThrowIn
-  defp reaction_action(%Event.Block{}), do: Action.BlockedShotRecover
-  defp reaction_action(%Event.DeflectedOutOfBounds{}), do: Action.ThrowIn
-  defp reaction_action(%Event.EndOfQuarter{}), do: Action.ThrowIn
-  defp reaction_action(_), do: nil
+  defp reaction_action(%Event.Foul{during_shot: false}, _), do: Action.ThrowIn
+  defp reaction_action(%Event.Block{}, _), do: Action.BlockedShotRecover
+  defp reaction_action(%Event.DeflectedOutOfBounds{}, _), do: Action.ThrowIn
+  defp reaction_action(%Event.EndOfQuarter{}, _), do: Action.ThrowIn
+  defp reaction_action(_, _), do: nil
 
   @time_critical 8
   defp determine_action(gs = %GameState{clock_seconds: clock_seconds, shot_clock: shot_clock})

@@ -30,17 +30,17 @@ defmodule BBEngine.BoxScore do
     }
   end
 
+  defp statistics(squad) do
+    player_stats = Enum.map(squad.players, fn player -> {player.id, %Statistics{}} end)
+    Map.new([{:team, %Statistics{}} | player_stats])
+  end
+
   @type update_function :: (Statistics.t() -> Statistics.t())
   @spec update(t, Possession.t(), Player.id(), update_function) :: t
   def update(box_score, team, player_id, statistics_update_function) do
     box_score
     |> update_in([team, player_id], statistics_update_function)
     |> update_in([team, :team], statistics_update_function)
-  end
-
-  defp statistics(squad) do
-    player_stats = Enum.map(squad.players, fn player -> {player.id, %Statistics{}} end)
-    Map.new([{:team, %Statistics{}} | player_stats])
   end
 
   @spec tie?(t) :: bool
