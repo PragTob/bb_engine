@@ -64,7 +64,7 @@ defmodule BBEngine.Simulation do
     end
   end
 
-  @spec reaction_action(Event.t(), GameState.t()) :: Action.t()
+  @spec reaction_action(Event.t(), GameState.t()) :: module
   defp reaction_action(%Event.Shot{success: false}, _), do: Action.Rebound
   defp reaction_action(%Event.Shot{success: true}, _), do: Action.ThrowIn
   defp reaction_action(%Event.Turnover{}, _), do: Action.ThrowIn
