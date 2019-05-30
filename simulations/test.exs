@@ -32,3 +32,17 @@ distribution =
 IO.inspect(distribution)
 
 IO.puts("\nEvent count: #{length(game_state.events)}")
+
+defmodule MemoryPrinter do
+  @word_size :erlang.system_info(:wordsize)
+  def print(name, term) do
+    size = :erts_debug.size(term)
+    flat_size = :erts_debug.flat_size(term)
+    IO.puts("size of #{name}: #{size * @word_size / 1024} kilobytes")
+    IO.puts("flat_size of #{name}: #{flat_size * @word_size / 1024} kilobytes")
+  end
+end
+
+MemoryPrinter.print("game state", game_state)
+MemoryPrinter.print("box_score", game_state.box_score)
+MemoryPrinter.print("events", game_state.events)
