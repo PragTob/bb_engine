@@ -30,15 +30,16 @@ defmodule BBEngine.Event.Turnover do
   @impl true
   @spec update_game_state(GameState.t(), t) :: GameState.t()
   def update_game_state(game_state, event) do
+    box_score =
+      BoxScore.update(game_state.box_score, event.team, event.actor_id, fn stats ->
+        update_in(stats.turnovers, &(&1 + 1))
+      end)
+
     %GameState{
       game_state
-      | shot_clock: GameState.shot_clock_seconds(),
-        ball_handler_id: nil,
+      | ball_handler_id: nil,
         possession: Possession.opposite(game_state.possession),
-        box_score:
-          BoxScore.update(game_state.box_score, event.team, event.actor_id, fn stats ->
-            update_in(stats.turnovers, &(&1 + 1))
-          end)
+        box_score: %BoxScore{box_score | shot_clock: BoxScore.shot_clock_seconds()}
     }
   end
 end

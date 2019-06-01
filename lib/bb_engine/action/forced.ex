@@ -1,4 +1,5 @@
 defmodule BBEngine.Action.Forced do
+  alias BBEngine.BoxScore
   alias BBEngine.GameState
   alias BBEngine.Simulation
   alias BBEngine.Random
@@ -17,7 +18,7 @@ defmodule BBEngine.Action.Forced do
            | Event.GameFinished.t()}
   def play(game_state) do
     {ball_handler, defender} = GameState.on_ball_matchup(game_state)
-    remaining_time = GameState.remaining_time(game_state)
+    remaining_time = BoxScore.remaining_time(game_state.box_score)
 
     {game_state, time_ran_out?} =
       time_ran_out?(game_state, ball_handler, defender, remaining_time)
@@ -46,16 +47,16 @@ defmodule BBEngine.Action.Forced do
         # would always end up here which is tough... but might be worth it.
         # How about a throw in after a made shot? Well forced could handle it. Hmm.
         if Simulation.finished?(game_state) do
-          %Event.GameFinished{duration: game_state.clock_seconds}
+          %Event.GameFinished{duration: game_state.box_score.clock_seconds}
         else
-          %Event.EndOfQuarter{duration: game_state.clock_seconds}
+          %Event.EndOfQuarter{duration: game_state.box_score.clock_seconds}
         end
       else
         %Event.Turnover{
           actor_id: game_state.ball_handler_id,
           team: game_state.possession,
           type: :clock_violation,
-          duration: game_state.shot_clock
+          duration: game_state.box_score.shot_clock
         }
       end
 
@@ -63,7 +64,7 @@ defmodule BBEngine.Action.Forced do
   end
 
   defp end_of_quarter?(game_state) do
-    game_state.clock_seconds <= game_state.shot_clock
+    game_state.box_score.clock_seconds <= game_state.box_score.shot_clock
   end
 
   @forced_shot_malus -15

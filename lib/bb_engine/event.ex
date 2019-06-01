@@ -1,6 +1,5 @@
 defmodule BBEngine.Event do
-  alias BBEngine.Event
-  alias BBEngine.GameState
+  alias BBEngine.{BoxScore, Event, GameState}
 
   @moduledoc """
   Gathers all the event types for easy typing.
@@ -43,11 +42,16 @@ defmodule BBEngine.Event do
   end
 
   defp common_event_changes(game_state, event) do
+    box_score = game_state.box_score
+
     %GameState{
       game_state
-      | clock_seconds: game_state.clock_seconds - event.duration,
-        shot_clock: game_state.shot_clock - shot_clock_duration(event),
-        events: [event | game_state.events]
+      | events: [event | game_state.events],
+        box_score: %BoxScore{
+          box_score
+          | clock_seconds: box_score.clock_seconds - event.duration,
+            shot_clock: box_score.shot_clock - shot_clock_duration(event)
+        }
     }
   end
 

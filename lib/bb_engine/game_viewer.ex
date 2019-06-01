@@ -93,7 +93,9 @@ defmodule BBEngine.GameViewer do
   end
 
   defp game_clock(game_state) do
-    "#{game_state.quarter} qt #{format_clock(game_state.clock_seconds)} (#{game_state.shot_clock})"
+    "#{game_state.box_score.quarter} qt #{format_clock(game_state.box_score.clock_seconds)} (#{
+      game_state.box_score.shot_clock
+    })"
   end
 
   @seconds_per_minute 60
@@ -106,6 +108,8 @@ defmodule BBEngine.GameViewer do
   defp seconds_padding(_), do: ""
 
   defp score(game_state) do
-    "(#{game_state.box_score.home.team.points}-#{game_state.box_score.road.team.points})"
+    "(#{game_state.box_score.home.team.total.points}-#{
+      game_state.box_score.road.team.total.points
+    })"
   end
 end

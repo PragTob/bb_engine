@@ -19,7 +19,7 @@ defmodule BBEngine.TestHelper do
   @spec road_squad() :: BBEngine.Squad.t()
   def road_squad, do: @road_squad
 
-  def build_game_state(override) do
+  def build_game_state(override \\ %{}) do
     game_state =
       @home_squad
       |> GameState.new(@road_squad, Random.seed())
@@ -27,5 +27,9 @@ defmodule BBEngine.TestHelper do
       |> Map.put(:possession, :home)
 
     Map.merge(game_state, override)
+  end
+
+  def adjust_clock(game_state, clock_map) do
+    update_in(game_state.box_score, fn box_score -> Map.merge(box_score, clock_map) end)
   end
 end

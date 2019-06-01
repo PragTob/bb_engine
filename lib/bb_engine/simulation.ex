@@ -76,7 +76,9 @@ defmodule BBEngine.Simulation do
   defp reaction_action(_, _), do: nil
 
   @time_critical 8
-  defp determine_action(gs = %GameState{clock_seconds: clock_seconds, shot_clock: shot_clock})
+  defp determine_action(
+         gs = %GameState{box_score: %{clock_seconds: clock_seconds, shot_clock: shot_clock}}
+       )
        when clock_seconds <= @time_critical or shot_clock <= @time_critical do
     {gs, Action.Forced}
   end
@@ -101,22 +103,22 @@ defmodule BBEngine.Simulation do
 
   defp catch_time_violations({game_state, event}) do
     event_happening =
-      if event.duration > game_state.clock_seconds do
+      if event.duration > game_state.box_score.clock_seconds do
         if finished?(game_state) do
-          %Event.GameFinished{duration: game_state.clock_seconds}
+          %Event.GameFinished{duration: game_state.box_score.clock_seconds}
         else
-          %Event.EndOfQuarter{duration: game_state.clock_seconds}
+          %Event.EndOfQuarter{duration: game_state.box_score.clock_seconds}
         end
       else
         # happens mostly/intendedly for rebounds but theoretically should apply to all
         # situations where no one has PLAYER CONTROL but the shot clock is only really
         # reset once it is established
-        if event.duration >= game_state.shot_clock && game_state.ball_handler_id do
+        if event.duration >= game_state.box_score.shot_clock && game_state.ball_handler_id do
           %Event.Turnover{
             actor_id: game_state.ball_handler_id,
             team: game_state.possession,
             type: :clock_violation,
-            duration: game_state.shot_clock
+            duration: game_state.box_score.shot_clock
           }
         else
           event
@@ -127,7 +129,8 @@ defmodule BBEngine.Simulation do
   end
 
   def finished?(game_state) do
-    game_state.quarter >= GameState.final_quarter() && !BoxScore.tie?(game_state.box_score)
+    game_state.box_score.quarter >= BoxScore.final_quarter() &&
+      !BoxScore.tie?(game_state.box_score)
   end
 
   defp apply_event({game_state, event}) do

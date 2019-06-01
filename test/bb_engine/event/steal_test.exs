@@ -35,8 +35,8 @@ defmodule BBEngine.Event.StealTest do
 
       gs = update_game_state(gs, event)
 
-      assert gs.box_score.road[17].steals == 1
-      assert gs.box_score.home[1].turnovers == 1
+      assert gs.box_score.road[17].total.steals == 1
+      assert gs.box_score.home[1].total.turnovers == 1
     end
   end
 end
