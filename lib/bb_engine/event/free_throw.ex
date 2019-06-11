@@ -32,13 +32,21 @@ defmodule BBEngine.Event.FreeThrow do
 
     %GameState{
       game_state
-      | ball_handler_id: nil,
+      | ball_handler_id: ball_handler(event),
         possession: possession_after(game_state.possession, event),
         box_score: %BoxScore{
           box_score
           | shot_clock: shot_clock_seconds(box_score.shot_clock, event)
         }
     }
+  end
+
+  defp ball_handler(event) do
+    if event.free_throws_remaining >= 1 do
+      event.actor_id
+    else
+      nil
+    end
   end
 
   defp shot_clock_seconds(_seconds, %__MODULE__{success: true}) do
