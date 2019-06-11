@@ -53,7 +53,7 @@ defmodule BBEngine.Random do
   # negative numbers mess this up, safe guard against it
   @type probability :: number
   @type weighted_map :: %{option => probability}
-  @spec weighted(GameState.t(), weighted_map) :: {GameState.t(), any}
+  @spec weighted(GameState.t(), weighted_map) :: {GameState.t(), option}
   def weighted(game_state, probability_map) do
     {list, max_value} =
       Enum.reduce(probability_map, {[], 0}, fn {entity, value}, {list, limit} ->
