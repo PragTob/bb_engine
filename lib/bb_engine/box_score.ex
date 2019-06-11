@@ -125,8 +125,15 @@ defmodule BBEngine.BoxScore do
     |> Map.new()
   end
 
-  @spec tie?(t) :: bool
+  @spec tie?(t) :: boolean
   def tie?(box_score) do
     box_score.home.team.total.points == box_score.road.team.total.points
+  end
+
+  @team_foul_limit 5
+
+  @spec team_foul_limit_reached?(t, Possession.t()) :: boolean
+  def team_foul_limit_reached?(box_score, team) do
+    Map.fetch!(box_score, team).team[box_score.quarter].fouls >= @team_foul_limit
   end
 end

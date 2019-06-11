@@ -31,6 +31,7 @@ defmodule BBEngine.Event.Foul do
     %GameState{
       game_state
       | ball_handler_id: nil,
+        possession: Possession.opposite(event.team),
         box_score: update_box_score(game_state.box_score, event)
     }
   end
