@@ -31,6 +31,7 @@ defmodule BBEngine.Event do
           | Event.DeflectedOutOfBounds.t()
           | Event.EndOfQuarter.t()
           | Event.GameFinished.t()
+          | Event.FreeThrow.t()
 
   @callback update_game_state(GameState.t(), Event.t()) :: GameState.t()
 

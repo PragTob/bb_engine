@@ -7,9 +7,8 @@ defmodule BBEngine.Action.FreeThrow do
 
   @free_throw_base_difficulty 50
 
-  @type result :: Event.Shot.t() | Event.Block.t() | Event.Foul.t()
   @impl true
-  @spec play(GameState.t()) :: {GameState.t(), result}
+  @spec play(GameState.t()) :: {GameState.t(), Event.FreeThrow.t()}
   def play(game_state) do
     shooter = GameState.ball_handler(game_state)
     # ofc use free throw skill, experience, pressure, traits etc...
