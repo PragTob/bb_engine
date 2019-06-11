@@ -54,10 +54,10 @@ defmodule BBEngine.Event.FreeThrow do
   end
 
   defp possession_after(possession, _missed_shot) do
-    nil
+    possession
   end
 
-  defp update_statistics(statistics, shot = %__MODULE__{success: true}) do
+  defp update_statistics(statistics, %__MODULE__{success: true}) do
     %Statistics{
       statistics
       | points: statistics.points + 1,

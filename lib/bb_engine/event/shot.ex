@@ -50,7 +50,7 @@ defmodule BBEngine.Event.Shot do
   end
 
   defp possession_after(possession, _missed_shot) do
-    nil
+    possession
   end
 
   defp shot_clock_seconds(_seconds, %__MODULE__{success: true}) do

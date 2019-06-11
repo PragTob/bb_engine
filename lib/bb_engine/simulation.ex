@@ -64,25 +64,30 @@ defmodule BBEngine.Simulation do
     end
   end
 
-  @spec reaction_action(Event.t(), GameState.t()) :: module
+  @spec reaction_action(Event.t(), GameState.t()) :: Action.t() | nil
   defp reaction_action(%Event.Shot{success: false}, _), do: Action.Rebound
   defp reaction_action(%Event.Shot{success: true}, _), do: Action.ThrowIn
   defp reaction_action(%Event.Turnover{}, _), do: Action.ThrowIn
+
+  defp reaction_action(%Event.FreeThrow{free_throws_remaining: remaining}, _)
+       when remaining >= 1 do
+    Action.FreeThrow
+  end
+
+  defp reaction_action(%Event.FreeThrow{success: false}, _), do: Action.Rebound
+  defp reaction_action(%Event.FreeThrow{success: true}, _), do: Action.ThrowIn
+
   # look at game state to see if team foul is too high
   defp reaction_action(foul = %Event.Foul{during_shot: false}, game_state) do
     if BoxScore.team_foul_limit_reached?(game_state.box_score, foul.team) do
-      # free throws... wow would be great to hand it parameters right now like number of free throws? damnnnn. we don't have that.
-      # other stuff like rebounds could do with some context (2pt vs 3pt shot for who is more likely to get it, little malus whoeve just shot the ball)
-      # however that'd mess up the whole API and actions that want to can still look at whatever was the last event, which has
-      # the positive side effect that the business logic ends up in the action
+      Action.FreeThrow
     else
       Action.ThrowIn
     end
   end
 
   defp reaction_action(%Event.Foul{during_shot: true}, _) do
-    # free throws
-    nil
+    Action.FreeThrow
   end
 
   defp reaction_action(%Event.Block{}, _), do: Action.BlockedShotRecover

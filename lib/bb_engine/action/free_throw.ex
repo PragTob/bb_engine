@@ -2,7 +2,6 @@ defmodule BBEngine.Action.FreeThrow do
   alias BBEngine.Random
   alias BBEngine.Event
   alias BBEngine.GameState
-  alias BBEngine.Player
 
   @behaviour BBEngine.Action
 
