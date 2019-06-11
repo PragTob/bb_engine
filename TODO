@@ -4,21 +4,20 @@ http://www.fiba.basketball/rule-differences
 
 
 ### Basic Actions/Events
-* Blocks
-* Fouls (during shot, reach in, offensive, defensive)
-* Free Throws
 * Foul Out
 * Loose Balls
-* Inbound
 
 ### Basic Game Engine Features
 * use real player skills (find a data source etc)
 * adjust values to make sense (does it make sense to build _autotune_ ?)
 
 ### Advanced Events
-* Dunks/Layups/CloseQuarterShots
-* Alley-Oop
+* offensive fouls
+* Dunks/Layups/CloseQuarterShots/Drives
 * More Turnovers (3 second violations, out of bounds, traveling, backcort...)
+
+### Very advanced events
+* Alley-Oop
 * Goaltending
 * Jump Balls (turning over possession according to FIBA rules)
 * Technical Fouls, DQ, Sportsmanslike fouls thingies
@@ -27,12 +26,15 @@ http://www.fiba.basketball/rule-differences
 * Substitutions
 * Timeouts
 * offensive focus
+
+### Very Advanced but design crucial features
+* dynamic tactic changes (if minute over bla and bla do substitute player)
+
+### Very Advanced Game Engine Features
 * degree of openness to determine if a shot is taken/difficulty of a pass etc.
 * Bonus to score attempts from passes/rebounds
 * fatigue (that also regenerates to some extent but never over a maximum during timeouts, breaks etc)
 * a degree of "hotness" for individual players or the whole time, when players come in they're cold, when everything is going well they're getting "hotter". Used to penalize frequent subs or give the opportunity to call a time out to "cool down" the other team
-* dynamic tactic changes (if minute over bla and bla do substitute player)
-* points per quarter per team breakdown (possibly all stats)
 
 ## Balance
 http://www.euroleague.net/competition/teams/showteam?clubcode=BAM#!stats
