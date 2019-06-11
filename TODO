@@ -43,10 +43,6 @@ http://www.euroleague.net/main/statistics?mode=Leaders&entity=Clubs&seasonmode=S
 * we're making too many points
 * Too many "Forced Shot" events are happening
 
-## Internal
-* switch random module to not always take the game_state but maybe just the seed
-  * this'd result in having to reset the seed manually a lot of times again
-
 ## Design
 
 ### Situations
@@ -63,3 +59,11 @@ Ideas for situations:
 Situations would also have a degree of openness etc.
 
 Q: How to represent great passes/cuts that result in an immediate basket
+
+### Randomness
+* switch random module to not always take the game_state but maybe just the seed
+  * this'd result in having to reset the seed manually a lot of times again
+
+### Reaction action
+Right now the reaction action is basically one huge switch statement in `Simulation` - it's worth considering also pulling that logic into the event itself as a callback. The data needed is close then, it's easier to see what follows an event without having to look at myultiple files.
+That way, `Simulation` is kept slim and devoid of logic - just as I like it.
