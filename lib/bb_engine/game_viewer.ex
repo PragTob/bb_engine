@@ -84,6 +84,18 @@ defmodule BBEngine.GameViewer do
     "And #{event.actor_id} fouls #{event.fouled_player_id} before the shot."
   end
 
+  defp event_log(event = %Event.Foul{during_shot: true}) do
+    "And #{event.actor_id} fouls #{event.fouled_player_id} while he was going for the shot. We'll see free throws next."
+  end
+
+  defp event_log(event = %Event.FreeThrow{success: true}) do
+    "#{event.actor_id} makes the free throw!"
+  end
+
+  defp event_log(event = %Event.FreeThrow{success: false}) do
+    "#{event.actor_id} misses the free throw!"
+  end
+
   defp event_log(%Event.EndOfQuarter{}) do
     "And this quarter is over!"
   end
