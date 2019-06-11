@@ -66,10 +66,14 @@ defmodule BBEngine.GameState do
 
   @spec on_ball_matchup(t) :: {Player.t(), Player.t()}
   def on_ball_matchup(game_state) do
-    ball_handler = player(game_state, game_state.ball_handler_id)
+    ball_handler = ball_handler(game_state)
     defender = matchup_player(game_state, ball_handler.id)
 
     {ball_handler, defender}
+  end
+
+  def ball_handler(game_state) do
+    player(game_state, game_state.ball_handler_id)
   end
 
   @spec player(t, Player.id()) :: Player.t()
