@@ -16,38 +16,35 @@ defmodule BBEngine.BoxScoreAggregator do
   end
 
   @spec aggregate([BoxScore.squad_statistics()], pos_integer) :: BoxScore.squad_statistics()
-  defp aggregate(scores, n) do
-    scores
-    |> Enum.reduce(fn statistics, acc -> aggregate_statistics(statistics, acc, n) end)
-    # |> Enum.map(fn {key, stats} -> {key, adjust_stats(stats, n)} end)
+  defp aggregate(squad_statistics, count) do
+    squad_statistics
+    |> Enum.reduce(fn squad_stat, acc -> aggregate_statistics(squad_stat, acc) end)
+    |> Enum.map(fn {id, stats} -> {id, adjust_player_stats_for_repetition(stats, count)} end)
     |> Map.new()
   end
 
   @spec aggregate_statistics(
           BoxScore.squad_statistics(),
-          BoxScore.squad_statistics(),
-          pos_integer
+          BoxScore.squad_statistics()
         ) ::
           BoxScore.squad_statistics()
-  defp aggregate_statistics(statistics, acc, count) do
+  defp aggregate_statistics(statistics, acc) do
     statistics
     |> Enum.map(fn {id, stats} ->
-      {id, add_individual_statistics(stats, acc[id], count)}
+      {id, add_individual_statistics(stats, acc[id])}
     end)
     |> Map.new()
   end
 
   @spec add_individual_statistics(
           BoxScore.individual_statistics(),
-          BoxScore.individual_statistics(),
-          pos_integer
+          BoxScore.individual_statistics()
         ) :: BoxScore.individual_statistics()
-  defp add_individual_statistics(statistics, acc, count) do
+  defp add_individual_statistics(statistics, acc) do
     statistics
     |> Enum.map(fn {time, stats} ->
       {time, add_statistics(stats, Map.get(acc, time, %Statistics{}))}
     end)
-    |> Enum.map(fn {key, stats} -> {key, adjust_stats(stats, count)} end)
     |> Map.new()
   end
 
@@ -58,10 +55,16 @@ defmodule BBEngine.BoxScoreAggregator do
     |> Map.new()
   end
 
-  defp adjust_stats(statistics, n) do
+  defp adjust_player_stats_for_repetition(player_stats, count) do
+    player_stats
+    |> Enum.map(fn {key, time_stats} -> {key, adjust_stats(time_stats, count)} end)
+    |> Map.new()
+  end
+
+  defp adjust_stats(statistics, count) do
     stats =
       statistics
-      |> Enum.map(fn {key, value} -> {key, value / n} end)
+      |> Enum.map(fn {key, value} -> {key, value / count} end)
       |> Map.new()
 
     struct(Statistics, stats)
