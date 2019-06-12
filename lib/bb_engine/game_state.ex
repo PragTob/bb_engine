@@ -24,7 +24,7 @@ defmodule BBEngine.GameState do
           matchups: %{Player.id() => Player.id()},
           initial_seed: Random.state(),
           current_seed: Random.state(),
-          events: [BBEngine.Event.t()] | []
+          events: [BBEngine.Event.t()]
         }
 
   @spec new(Squad.t(), Squad.t(), Random.state()) :: t
