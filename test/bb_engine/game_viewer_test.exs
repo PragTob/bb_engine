@@ -13,12 +13,14 @@ defmodule GameViewerTest do
 
     home_squad = %Squad{
       players: home_players,
-      lineup: [1, 2, 3, 4, 5]
+      lineup: [1, 2, 3, 4, 5],
+      bench: Enum.to_list(6..12)
     }
 
     road_squad = %Squad{
       players: road_players,
-      lineup: [13, 14, 15, 16, 17]
+      lineup: [13, 14, 15, 16, 17],
+      bench: Enum.to_list(18..25)
     }
 
     capture_io(fn -> GameViewer.simulate(home_squad, road_squad) end)

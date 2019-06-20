@@ -1,5 +1,5 @@
 defmodule BBEngine.Simulation do
-  alias BBEngine.{GameState, Action, Random, Event, BoxScore, Squad}
+  alias BBEngine.{GameState, Action, Random, Event, BoxScore, Squad, Substitution}
 
   @spec new(Squad.t(), Squad.t(), Random.state()) :: GameState.t()
   def new(home_squad, road_squad, seed \\ Random.seed()) do
@@ -119,6 +119,7 @@ defmodule BBEngine.Simulation do
     |> action_module.play
     |> catch_time_violations
     |> apply_event
+    |> trigger_off_the_court_actions
   end
 
   defp catch_time_violations({game_state, event}) do
@@ -154,6 +155,48 @@ defmodule BBEngine.Simulation do
   end
 
   defp apply_event({game_state, event}) do
-    Event.apply(game_state, event)
+    {Event.apply(game_state, event), event}
+  end
+
+  # off the court actions are substitutions, tactic changes etc
+  # can only be done after specific events
+  defp trigger_off_the_court_actions({game_stae, %Event.Shot{success: true}}) do
+    # probably only the deam with possession right?
+    trigger_tactics(game_stae)
+  end
+
+  defp trigger_off_the_court_actions({game_state, %Event.Turnover{}}) do
+    trigger_tactics(game_state)
+  end
+
+  defp trigger_off_the_court_actions({game_state, event = %Event.Foul{}}) do
+    if BoxScore.fouled_out?(game_state.box_score, event.team, event.actor_id) do
+      game_state
+      |> force_substitution(event.team, event.actor_id)
+      |> trigger_tactics
+    else
+      trigger_tactics(game_state)
+    end
+  end
+
+  defp trigger_off_the_court_actions({game_state, %Event.DeflectedOutOfBounds{}}) do
+    trigger_tactics(game_state)
+  end
+
+  defp trigger_off_the_court_actions({game_state, %Event.EndOfQuarter{}}) do
+    trigger_tactics(game_state)
+  end
+
+  defp trigger_off_the_court_actions({game_state, _can_t_do_off_the_court}) do
+    game_state
+  end
+
+  defp trigger_tactics(game_state) do
+    # TODO: implement me when implementing tactics :)
+    game_state
+  end
+
+  defp force_substitution(game_state, team, player_id) do
+    Substitution.force_substitute(game_state, team, player_id)
   end
 end

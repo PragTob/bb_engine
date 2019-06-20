@@ -136,4 +136,9 @@ defmodule BBEngine.BoxScore do
   def team_foul_limit_reached?(box_score, team) do
     Map.fetch!(box_score, team).team[box_score.quarter].fouls >= @team_foul_limit
   end
+
+  @personal_foul_limit 5
+  def fouled_out?(box_score, team, player_id) do
+    get_in(box_score, [team, player_id]).total >= @personal_foul_limit
+  end
 end

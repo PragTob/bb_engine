@@ -4,12 +4,17 @@ defmodule BBEngine.Squad do
   defstruct [
     :lineup,
     :bench,
-    :players
+    # fouled out, injured etc.
+    :players,
+    ineligible: []
   ]
 
+  @type lineup :: [Player.id(), ...]
+
   @type t :: %__MODULE__{
-          lineup: [Player.id()],
-          bench: [Player.id()],
-          players: [Player.t()]
+          lineup: lineup,
+          bench: [Player.id(), ...],
+          players: [Player.t(), ...],
+          ineligible: [Player.id()]
         }
 end

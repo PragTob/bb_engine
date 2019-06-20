@@ -1,5 +1,5 @@
 defmodule BBEngine.GameViewer do
-  alias BBEngine.{GameState, Random, Event, Squad, Simulation}
+  alias BBEngine.{GameState, Random, Event, Squad, Simulation, Substitution}
 
   @spec simulate(Squad.t(), Squad.t(), Random.state()) :: GameState.t()
   def simulate(home_squad, road_squad, seed \\ Random.seed()) do
@@ -19,6 +19,8 @@ defmodule BBEngine.GameViewer do
     |> proceed_simulation
   end
 
+  # TODO: multiple events may now happen (substitutions and all) -->
+  # interface probably has to change
   defp log_event(game_state = %{events: [current_event | _]}) do
     game_state
     |> log_it(current_event)
@@ -94,6 +96,10 @@ defmodule BBEngine.GameViewer do
 
   defp event_log(event = %Event.FreeThrow{success: false}) do
     "#{event.actor_id} misses the free throw!"
+  end
+
+  defp event_log(substitution = %Substitution{}) do
+    "#{substitution.to_substitute_id} is replace with #{substitution.substitute_id}!"
   end
 
   defp event_log(%Event.EndOfQuarter{}) do
