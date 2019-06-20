@@ -3,19 +3,28 @@ defmodule BBEngine.ActionChooser do
   Depending on current game state/context choose which action shall be performed next.
   """
   alias BBEngine.{Action, BoxScore, Event, GameState, Random}
-  @spec next_action(GameState.t()) :: {GameState.t(), module}
-  def next_action(game_state = %GameState{events: []}) do
+
+  @spec next_action(GameState.t()) ::
+          {GameState.t(), (GameState.t() -> {GameState.t(), Event.t()})}
+  def next_action(game_state) do
+    {game_state, action_module} = determine_action(game_state)
+    action_function = &action_module.play/1
+
+    {game_state, action_function}
+  end
+
+  defp determine_action(game_state = %GameState{events: []}) do
     # should be jump ball
     {game_state, Action.Pass}
   end
 
-  def next_action(game_state = %GameState{events: [previous_event | _]}) do
+  defp determine_action(game_state = %GameState{events: [previous_event | _]}) do
     reaction = reaction_action(previous_event, game_state)
 
     if reaction do
       {game_state, reaction}
     else
-      determine_action(game_state)
+      play_dictated_action(game_state)
     end
   end
 
@@ -51,7 +60,7 @@ defmodule BBEngine.ActionChooser do
   defp reaction_action(_, _), do: nil
 
   @time_critical 8
-  defp determine_action(
+  defp play_dictated_action(
          gs = %GameState{box_score: %{clock_seconds: clock_seconds, shot_clock: shot_clock}}
        )
        when clock_seconds <= @time_critical or shot_clock <= @time_critical do
@@ -63,7 +72,7 @@ defmodule BBEngine.ActionChooser do
     Action.TwoPointShot => 17,
     Action.ThreePointShot => 8
   }
-  defp determine_action(game_state) do
+  defp play_dictated_action(game_state) do
     # Obviously needs to get more sophisticated/adaptive to team tactics
     Random.weighted(game_state, @action_probability_map)
   end

@@ -49,9 +49,9 @@ defmodule BBEngine.Simulation do
   end
 
   @spec simulate_action({GameState.t(), module}) :: GameState.t()
-  def simulate_action({game_state, action_module}) do
+  def simulate_action({game_state, action_function}) do
     game_state
-    |> action_module.play
+    |> action_function.()
     |> catch_time_violations
     |> apply_event
     |> trigger_off_the_court_actions
@@ -84,6 +84,7 @@ defmodule BBEngine.Simulation do
     {game_state, event_happening}
   end
 
+  @spec finished?(GameState.t()) :: boolean
   def finished?(game_state) do
     game_state.box_score.quarter >= BoxScore.final_quarter() &&
       !BoxScore.tie?(game_state.box_score)
