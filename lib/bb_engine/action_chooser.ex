@@ -4,6 +4,17 @@ defmodule BBEngine.ActionChooser do
   """
   alias BBEngine.{Action, BoxScore, Event, GameState, Random}
 
+  @doc """
+  Return the GameState and the next event to be played.
+
+  If you're wondering why GameState is returned, it's because it holds
+  the random generator which might be invoked and of which the state must
+  be correctly maintained.
+
+  That was a design decision at one point that might be worth rethinking
+  at another point (as it causes game_state being passed around a lot).
+  However it saves us the stitching together of it.
+  """
   @spec next_action(GameState.t()) ::
           {GameState.t(), (GameState.t() -> {GameState.t(), Event.t()})}
   def next_action(game_state) do
