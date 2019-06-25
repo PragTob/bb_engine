@@ -48,7 +48,9 @@ defmodule BBEngine.Simulation do
     |> simulate_action()
   end
 
-  @spec simulate_action({GameState.t(), module}) :: GameState.t()
+  @typep action_function :: (GameState.t() -> {GameState.t(), Event.t()})
+  @spec simulate_action({GameState.t(), action_function}) ::
+          GameState.t()
   def simulate_action({game_state, action_function}) do
     game_state
     |> action_function.()
